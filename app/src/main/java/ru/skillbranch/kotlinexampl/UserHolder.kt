@@ -40,7 +40,6 @@ object UserHolder {
             }
     }
 
-
     fun requestAccessCode(login: String) {
         if (login.trim().startsWith('+')) {
             map[login.replace("""[^+\d]""".toRegex(), "")]?.let {
@@ -49,6 +48,10 @@ object UserHolder {
                 it.sendAccessCodeToUser(it.login, it.accessCode.toString())
             }
         }
+    }
+
+    fun importUsers(list: List<String>): List{
+        return list
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
