@@ -1,6 +1,7 @@
 package ru.skillbranch.kotlinexample
 
 import androidx.annotation.VisibleForTesting
+import ru.skillbranch.kotlinexample.extensions.loginNormalized
 
 object UserHolder {
 
@@ -27,34 +28,36 @@ object UserHolder {
         }
     }
 
-    fun loginUser(login: String, password: String): String? {
-        return if (login.trim().startsWith('+')){
-            map[login.replace("""[^+\d]""".toRegex(), "")]?.let {
-                if (it.checkPassword(it.accessCode.toString())) it.userInfo
-                else null
-            }
-        } else
-            map[login.trim()]?.let {
+    fun loginUser(login: String, password: String): String? =
+        map[login.loginNormalized()]?.let {
                 if (it.checkPassword(password)) it.userInfo
                 else null
             }
-    }
 
     fun requestAccessCode(login: String) {
         if (login.trim().startsWith('+')) {
             map[login.replace("""[^+\d]""".toRegex(), "")]?.let {
                 it.changePassword(it.accessCode.toString(), it.generateAccessCode())
-
                 it.sendAccessCodeToUser(it.login, it.accessCode.toString())
             }
         }
     }
 
     fun importUsers(list: List<String>): List<User>{
+        val result: MutableList<User> = mutableListOf()
+        for ( str in list) {
+            val userInf = str.split(";")
+            println(userInf)
 
+            val saltHash =userInf[2].trim().split(":")
 
+            val login = if(userInf[1].isNotBlank()) userInf[1] else userInf[3]
 
-        return emptyList()
+            if (!map.containsKey(login) ) {
+                result.add(User.makeUser(userInf[0], email = userInf[1], salt = saltHash[0], password = saltHash[1], phone = userInf[3] ).also { user -> map[user.login] = user })
+            }
+        }
+        return result
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)

@@ -67,6 +67,27 @@ class User private constructor(
         sendAccessCodeToUser(rawPhone, code)
     }
 
+    //for import csv
+    constructor(
+        firstName: String,
+        lastName: String?,
+        email: String?,
+        salt: String,
+        passwordHash: String,
+        rawPhone: String?
+    ) : this( firstName,lastName,
+              email = email, rawPhone = rawPhone,
+              meta = mapOf("src" to "csv")) {
+        println("Secondary import csv constructor")
+        val code = generateAccessCode()
+        this@User.passwordHash = passwordHash
+        this@User.salt = salt
+        if (email.isNullOrEmpty()) {
+            accessCode = code
+            this@User.phone?.let { sendAccessCodeToUser(it, code) }
+        }
+    }
+
     init {
         println("First init block, primary constructor was called")
 
@@ -141,10 +162,19 @@ class User private constructor(
             fullName: String,
             email: String? = null,
             password: String? = null,
-            phone: String? = null
+            phone: String? = null,
+            salt: String? = null
         ) : User {
             val (firstName, lastName) = fullName.fullNameToPair()
             return when {
+                !salt.isNullOrBlank()&&!password.isNullOrBlank() -> User(
+                    firstName,
+                    lastName,
+                    email,
+                    salt,
+                    password,
+                    phone
+                )
                 !phone.isNullOrBlank() -> User(
                     firstName,
                     lastName,
