@@ -1,4 +1,4 @@
-package ru.skillbranch.kotlinexampl
+package ru.skillbranch.kotlinexample
 
 import androidx.annotation.VisibleForTesting
 import java.math.BigInteger
@@ -145,7 +145,11 @@ class User private constructor(
         ) : User {
             val (firstName, lastName) = fullName.fullNameToPair()
             return when {
-                !phone.isNullOrBlank() -> User(firstName, lastName, phone)
+                !phone.isNullOrBlank() -> User(
+                    firstName,
+                    lastName,
+                    phone
+                )
                 !email.isNullOrBlank() && !password.isNullOrBlank() -> User(
                     firstName,
                     lastName,

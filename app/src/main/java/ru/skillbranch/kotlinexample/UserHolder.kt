@@ -1,4 +1,4 @@
-package ru.skillbranch.kotlinexampl
+package ru.skillbranch.kotlinexample
 
 import androidx.annotation.VisibleForTesting
 
@@ -50,8 +50,11 @@ object UserHolder {
         }
     }
 
-    fun importUsers(list: List<String>): List{
-        return list
+    fun importUsers(list: List<String>): List<User>{
+
+
+
+        return emptyList()
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
