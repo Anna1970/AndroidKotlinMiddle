@@ -76,13 +76,13 @@ class User private constructor(
         passwordHash: String,
         rawPhone: String?
     ) : this( firstName,lastName,
-              email = email, rawPhone = rawPhone,
+              email = email?.trim(), rawPhone = rawPhone?.trim(),
               meta = mapOf("src" to "csv")) {
         println("Secondary import csv constructor")
         val code = generateAccessCode()
         this@User.passwordHash = passwordHash
         this@User.salt = salt
-        if (email.isNullOrEmpty()) {
+        if (email.isNullOrBlank()) {
             accessCode = code
             this@User.phone?.let { sendAccessCodeToUser(it, code) }
         }
@@ -95,7 +95,12 @@ class User private constructor(
         check(!email.isNullOrBlank() || !rawPhone.isNullOrBlank()) {"Email or phone must not be null or blank"}
 
         phone = rawPhone
+
+        println("email:$email phone:$phone")
+
         login = email ?: phone!!
+
+        println("and login is: $login")
 
         userInfo = """
             firstName: $firstName

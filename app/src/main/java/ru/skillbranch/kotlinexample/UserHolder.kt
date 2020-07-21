@@ -47,14 +47,18 @@ object UserHolder {
         val result: MutableList<User> = mutableListOf()
         for ( str in list) {
             val userInf = str.split(";")
-            println(userInf)
-
             val saltHash =userInf[2].trim().split(":")
 
-            val login = if(userInf[1].isNotBlank()) userInf[1] else userInf[3]
+            var email:String? = null
+            if(userInf[1].isNotEmpty()) email=userInf[1].trim()
+            var phone:String? = null
+            if (userInf[3].isNotEmpty()) phone = userInf[3]
+
+            var  login = (email?:phone!!).loginNormalized()
 
             if (!map.containsKey(login) ) {
-                result.add(User.makeUser(userInf[0], email = userInf[1], salt = saltHash[0], password = saltHash[1], phone = userInf[3] ).also { user -> map[user.login] = user })
+                println("map not contain login $login")
+                result.add(User.makeUser(userInf[0], email = email, salt = saltHash[0], password = saltHash[1], phone = phone ).also { user -> map[login] = user })
             }
         }
         return result

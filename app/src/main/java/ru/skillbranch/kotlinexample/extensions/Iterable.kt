@@ -8,4 +8,6 @@ fun  String.loginNormalized() : String {
     return result
 }
 
-//fun List.dropLastUntil()
+//fun CharSequence.any(predicate: (Char) -> Boolean): Boolean {}
+
+//fun List.dropLastUntil(predicate: (T) -> Boolean) : List {}
