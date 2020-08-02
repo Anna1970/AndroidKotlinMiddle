@@ -46,12 +46,15 @@
         android:elevation="4dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_dodgeInsetEdges="bottom"/>
+        android:visibility="gone"
+        app:layout_dodgeInsetEdges="bottom"
+        tools:visibility="visible"/>
 
     <ru.skillbranch.skillarticles.ui.custom.Bottombar
         android:id="@+id/bottombar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="56dp"
         android:layout_gravity = "bottom"
         android:theme="@style/ArticleBarsTheme"
         android:elevation="4dp"

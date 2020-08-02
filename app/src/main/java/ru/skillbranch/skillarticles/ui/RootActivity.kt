@@ -2,12 +2,11 @@ package ru.skillbranch.skillarticles.ui
 
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
 import android.widget.ImageView
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.contentValuesOf
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_root.*
@@ -41,6 +40,25 @@ class RootActivity : AppCompatActivity() {
         viewModel.observeNotifications(this) {
             renderNotification(it)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_search, menu)
+        val menuItem = menu?.findItem(R.id.action_search)
+        val actionView = menuItem?.actionView as SearchView
+        actionView.queryHint = "Search"
+        actionView.setOnQueryTextListener( object : SearchView.OnQueryTextListener{
+            override fun onQueryTextChange(newText: String?): Boolean {
+                //viewModel.handleSearchQuery(newText)
+                //viewModel.handleIsSearch(true)
+                return false
+            }
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.handleSearchQuery(query)
+                return true
+            }
+        })
+        return super.onCreateOptionsMenu(menu)
     }
 
     private fun setupToolbar() {
@@ -109,7 +127,6 @@ class RootActivity : AppCompatActivity() {
                 }
             }
         }
-
         snackbar.show()
     }
 
