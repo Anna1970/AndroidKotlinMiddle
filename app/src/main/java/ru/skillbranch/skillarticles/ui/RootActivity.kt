@@ -1,6 +1,7 @@
 package ru.skillbranch.skillarticles.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
@@ -34,7 +35,11 @@ class RootActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this, vmFactory).get(ArticleViewModel::class.java)
         viewModel.observeState(this) {
             renderUi(it)
-            setupToolbar()
+
+            Log.e("SkillArticles", "vmFactory isSearch = ${it.isSearch}")
+
+            if (!it.isSearch)
+                setupToolbar()
         }
 
         viewModel.observeNotifications(this) {
@@ -47,13 +52,21 @@ class RootActivity : AppCompatActivity() {
         val menuItem = menu?.findItem(R.id.action_search)
         val actionView = menuItem?.actionView as SearchView
         actionView.queryHint = "Search"
+
+        Log.e("SkillArticles Search", "onCreateOptionsMenu isSearch = ${viewModel.currentState.isSearch}\n searchQuery = ${viewModel.currentState.searchQuery}")
+
+        if (viewModel.currentState.isSearch){
+            actionView.setQuery(viewModel.currentState.searchQuery, !viewModel.currentState.isSearch)
+        }
+
         actionView.setOnQueryTextListener( object : SearchView.OnQueryTextListener{
             override fun onQueryTextChange(newText: String?): Boolean {
-                //viewModel.handleSearchQuery(newText)
-                //viewModel.handleIsSearch(true)
+                viewModel.handleIsSearch(true)
+                viewModel.handleSearchQuery(newText)
                 return false
             }
             override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.handleIsSearch(false)
                 viewModel.handleSearchQuery(query)
                 return true
             }
@@ -142,6 +155,4 @@ class RootActivity : AppCompatActivity() {
         btn_share.setOnClickListener { viewModel.handleShare()}
         btn_settings.setOnClickListener { viewModel.handleToggleMenu()}
     }
-
-
 }

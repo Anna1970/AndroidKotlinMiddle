@@ -8,4 +8,4 @@
     android:maxWidth="9999dp">
 </androidx.appcompat.widget.SearchView>
 
-<!-- style="@style/ArticleToolbar"-->
+<!--style="@style/ArticleToolbar"-->

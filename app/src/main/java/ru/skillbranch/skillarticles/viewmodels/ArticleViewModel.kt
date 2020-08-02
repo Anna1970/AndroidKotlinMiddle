@@ -133,10 +133,12 @@ class ArticleViewModel(private val articleID: String) : BaseViewModel<ArticleSta
     }
 
     fun handleSearchQuery(query: String?) {
+        Log.e("SkillArticles Search", "handleSearchQuery query = ${query}")
         updateState { it.copy(searchQuery = query) }
     }
 
     fun handleIsSearch(isSearch: Boolean) {
+        Log.e("SkillArticles", "handleIsSearch isSearch = ${isSearch}")
         updateState { it.copy(isSearch = isSearch) }
     }
 }
