@@ -36,10 +36,7 @@ class RootActivity : AppCompatActivity() {
         viewModel.observeState(this) {
             renderUi(it)
 
-            Log.e("SkillArticles", "vmFactory isSearch = ${it.isSearch}")
-
-            if (!it.isSearch)
-                setupToolbar()
+            if (!it.isSearch) setupToolbar()
         }
 
         viewModel.observeNotifications(this) {
@@ -53,10 +50,9 @@ class RootActivity : AppCompatActivity() {
         val actionView = menuItem?.actionView as SearchView
         actionView.queryHint = "Search"
 
-        Log.e("SkillArticles Search", "onCreateOptionsMenu isSearch = ${viewModel.currentState.isSearch}\n searchQuery = ${viewModel.currentState.searchQuery}")
-
         if (viewModel.currentState.isSearch){
-            actionView.setQuery(viewModel.currentState.searchQuery, !viewModel.currentState.isSearch)
+            menuItem.expandActionView()
+            actionView.setQuery(viewModel.currentState.searchQuery, viewModel.currentState.isSearch)
         }
 
         actionView.setOnQueryTextListener( object : SearchView.OnQueryTextListener{

@@ -133,12 +133,10 @@ class ArticleViewModel(private val articleID: String) : BaseViewModel<ArticleSta
     }
 
     fun handleSearchQuery(query: String?) {
-        Log.e("SkillArticles Search", "handleSearchQuery query = ${query}")
         updateState { it.copy(searchQuery = query) }
     }
 
     fun handleIsSearch(isSearch: Boolean) {
-        Log.e("SkillArticles", "handleIsSearch isSearch = ${isSearch}")
         updateState { it.copy(isSearch = isSearch) }
     }
 }
@@ -155,7 +153,7 @@ data class ArticleState (
     val isSearch: Boolean = false, //режим поиска
     val searchQuery: String? = null, //поисковый запрос
     val searchResults: List<Pair<Int, Int>> = emptyList(),//результаты поиска(стартовая и конечная позиции
-    val searchPosition: Int = 0, //текущая позиция найденного резуоьтата
+    val searchPosition: Int = 0, //текущая позиция найденного результата
     val shareLink: String? = null, //ссылка Share
     val title: String? = null, //заголовок статьи
     val category: String? = null, //категория
