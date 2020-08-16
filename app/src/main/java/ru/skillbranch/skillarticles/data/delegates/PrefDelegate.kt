@@ -3,23 +3,26 @@ package ru.skillbranch.skillarticles.data.delegates
 
 import android.content.SharedPreferences
 import android.content.res.Resources
+import androidx.preference.PreferenceManager
 import ru.skillbranch.skillarticles.data.local.PrefManager
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-@Suppress("UNCHECKED_CAST")
 class PrefDelegate <T> (private val defaultValue: T) : ReadWriteProperty<PrefManager, T>{
+
+    @Suppress("UNCHECKED_CAST")
     override fun getValue(thisRef: PrefManager, property: KProperty<*>): T {
-        return (thisRef as SharedPreferences).get(property.name, defaultValue)
+        return thisRef.get(property.name, defaultValue)
     }
 
     override fun setValue(thisRef: PrefManager, property: KProperty<*>, value: T) {
-        (thisRef as SharedPreferences).put(property.name, value)
+        //(thisRef as SharedPreferences).put(property.name, value)
+        thisRef.put(property.name, value)
     }
 }
 
-fun <T> SharedPreferences.put(key: String, value: T) {
-    with(this.edit()) {
+fun <T> PrefManager.put(key: String, value: T) {
+    with((this as SharedPreferences).edit()) {
         when (value) {
             is Boolean -> putBoolean(key, value)
             is Int -> putInt(key, value)
@@ -32,8 +35,8 @@ fun <T> SharedPreferences.put(key: String, value: T) {
     }
 }
 
-fun <T> SharedPreferences.get(key: String, defaultValue: T): T {
-    with(this) {
+fun <T> PrefManager.get(key: String, defaultValue: T): T {
+    with(this as SharedPreferences) {
         return when (defaultValue) {
             is Boolean -> (getBoolean(key, defaultValue) as? T) ?: defaultValue
             is Int -> (getInt(key, defaultValue) as T) ?: defaultValue
