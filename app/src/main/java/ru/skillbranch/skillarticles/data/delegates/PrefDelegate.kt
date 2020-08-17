@@ -12,17 +12,16 @@ class PrefDelegate <T> (private val defaultValue: T) : ReadWriteProperty<PrefMan
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(thisRef: PrefManager, property: KProperty<*>): T {
-        return thisRef.get(property.name, defaultValue)
+        return thisRef.preferences.get(property.name, defaultValue)
     }
 
     override fun setValue(thisRef: PrefManager, property: KProperty<*>, value: T) {
-        //(thisRef as SharedPreferences).put(property.name, value)
-        thisRef.put(property.name, value)
+        thisRef.preferences.put(property.name, value)
     }
 }
 
-fun <T> PrefManager.put(key: String, value: T) {
-    with((this as SharedPreferences).edit()) {
+fun <T> SharedPreferences.put(key: String, value: T) {
+    with((this).edit()) {
         when (value) {
             is Boolean -> putBoolean(key, value)
             is Int -> putInt(key, value)
@@ -35,8 +34,8 @@ fun <T> PrefManager.put(key: String, value: T) {
     }
 }
 
-fun <T> PrefManager.get(key: String, defaultValue: T): T {
-    with(this as SharedPreferences) {
+fun <T> SharedPreferences.get(key: String, defaultValue: T): T {
+    with(this) {
         return when (defaultValue) {
             is Boolean -> (getBoolean(key, defaultValue) as? T) ?: defaultValue
             is Int -> (getInt(key, defaultValue) as T) ?: defaultValue
