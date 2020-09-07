@@ -1,9 +1,7 @@
 package ru.skillbranch.skillarticles.markdown.spans
 
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.RectF
+import android.graphics.*
+import android.text.Spanned
 import android.text.style.ReplacementSpan
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
@@ -38,7 +36,29 @@ class BlockCodeSpan(
         bottom: Int,
         paint: Paint
     ) {
-        //TODO implement me()
+        when (type) {
+            Element.BlockCode.Type.SINGLE -> {
+                /*paint.forBackground {
+                   rect.set(0f,
+                       top + padding,
+                        canvas.width.toFloat(),
+                        bottom - padding)
+                   canvas.drawRoundRect(
+                       rect,
+                       cornerRadius,
+                       cornerRadius,
+                       paint
+                   )
+                }*/
+
+                paint.forText {
+                    canvas.drawText(text, 0, text.length, padding, y + padding, paint)
+                }
+            }
+            Element.BlockCode.Type.START -> {}
+            Element.BlockCode.Type.MIDDLE -> {}
+            Element.BlockCode.Type.END -> {}
+        }
     }
 
     override fun getSize(
@@ -48,7 +68,40 @@ class BlockCodeSpan(
         end: Int,
         fm: Paint.FontMetricsInt?
     ): Int {
-        //TODO implement me()
-        return 0
+        when (type) {
+            Element.BlockCode.Type.SINGLE -> {
+                paint.forText {
+                    val measureText = paint.measureText(text.toString(), start, end)
+                    fm?.ascent = (measureText * 0.85f- 2*padding).toInt()
+                    fm?.descent = (measureText * 0.85f + 2*padding).toInt()
+                }
+
+                return 0
+            }
+            Element.BlockCode.Type.START -> {return 0}
+            Element.BlockCode.Type.MIDDLE -> {return 0}
+            Element.BlockCode.Type.END -> {return 0}
+            else -> error("Invalid Type")
+        }
+    }
+
+    private inline fun Paint.forText(block: () -> Unit) {
+        val oldColor = color
+        color = textColor
+        block()
+        color = oldColor
+    }
+
+    private inline fun Paint.forBackground(block: () -> Unit) {
+        val oldColor = color
+        val oldStyle = style
+
+        color = bgColor
+        style = Paint.Style.FILL
+
+        block()
+
+        color = oldColor
+        style = oldStyle
     }
 }

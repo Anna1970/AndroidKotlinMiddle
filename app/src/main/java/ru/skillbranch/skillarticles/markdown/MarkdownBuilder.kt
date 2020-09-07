@@ -8,6 +8,7 @@ import android.text.SpannedString
 import android.text.style.StrikethroughSpan
 import android.text.style.StyleSpan
 import android.text.style.URLSpan
+import android.util.Log
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import ru.skillbranch.skillarticles.R
@@ -120,6 +121,15 @@ class MarkdownBuilder(context: Context) {
                         append(element.text)
                     }
                 }
+
+                /*is Element.BlockCode -> {
+                    Log.e("-=BLOCK CODE=-", "Texy: ${element.text} Type: ${element.type}")
+                    inSpans(
+                        BlockCodeSpan(colorOnSurface, colorSurface, cornerRadius, gap, element.type)
+                    ){
+                        append(element.text)
+                    }
+                }*/
 
                 is Element.OrderedListItem -> {
                     inSpans(OrderedListSpan(gap, element.order, colorPrimary)) {

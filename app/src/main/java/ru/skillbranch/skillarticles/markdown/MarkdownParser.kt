@@ -19,13 +19,13 @@ object MarkdownParser {
     private const val RULE_GROUP = "(^[-_*]{3}$)"
     private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`\\s]?`(?!`))"
     private const val LINK_GROUP = "(\\[[^\\[\\]]*?]\\(.+?\\)|^\\[*?]\\(.*?\\))"
-    private const val BLOCK_CODE_GROUP = "(^[`]{3}((.+)\\s)*.+[`]{3}\$)"
+    private const val BLOCK_CODE_GROUP = "(^[`]{3}[^`].*?[\\w\\s]+.+[`]{3}\$)"//"(^[`]{3}((.+)\\s)*.+[`]{3}\$)"
     private const val ORDER_LIST_GROUP = "(^[\\d+]\\. .+$)"
 
     //result regex
     private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
-            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP" /*+
-            "|$BLOCK_CODE_GROUP|$ORDER_LIST_GROUP" //optionally*/
+            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP" +
+            "|$BLOCK_CODE_GROUP|$ORDER_LIST_GROUP" //optionally
 
     private val elementsPattern by lazy { Pattern.compile(MARKDOWN_GROUPS, Pattern.MULTILINE) }
 
@@ -78,7 +78,7 @@ object MarkdownParser {
             var text : CharSequence
 
             //group range for iterate by groups
-            val groups = 1..9
+            val groups = 1..11
             var group = -1
             for (gr in groups) {
                 if (matcher.group(gr) != null) {
@@ -155,7 +155,6 @@ object MarkdownParser {
                     val element = Element.Strike(text, subelements)
                     parents.add(element)
                     lastStartIndex = endIndex
-
                 }
 
                 //RULE
@@ -164,7 +163,6 @@ object MarkdownParser {
                     val element = Element.Rule()
                     parents.add(element)
                     lastStartIndex = endIndex
-
                 }
 
                 //INLINE
@@ -174,7 +172,6 @@ object MarkdownParser {
                     val element = Element.InlineCode(text)
                     parents.add(element)
                     lastStartIndex = endIndex
-
                 }
 
                 //LINK
@@ -191,29 +188,22 @@ object MarkdownParser {
                 10 -> {
                     //text without "```{}```"
 
-                    /*Log.e("MY_TAG=- ", "BLOCK CODE START")
-
                     text = string.subSequence(startIndex.plus(3), endIndex.plus(-3))
 
-                    //val subelements = findElements(text)
-                    val element = Element.BlockCode(Element.BlockCode.Type.SINGLE, text )
-                    parents.add(element)
-/*
-                    val multistring = text.split("\n")
+                    val multistring = text.lines()//text.split("\n")
                     lateinit var element:Element.BlockCode
 
                     multistring.forEachIndexed {index: Int, str: String ->
-                        //val subelements = findElements(str)
+                        val subelements = findElements(str)
                         element = when {
-                            multistring.count() == 1 -> Element.BlockCode(Element.BlockCode.Type.SINGLE, str)
-                            index == 0 -> Element.BlockCode(Element.BlockCode.Type.START, str)
-                            index == multistring.lastIndex -> Element.BlockCode(Element.BlockCode.Type.END, str)
-                            else -> Element.BlockCode(Element.BlockCode.Type.MIDDLE, str)
+                            multistring.count() == 1 -> Element.BlockCode(Element.BlockCode.Type.SINGLE, str, subelements)
+                            index == 0 -> Element.BlockCode(Element.BlockCode.Type.START, str + "\n", subelements)
+                            index == multistring.lastIndex -> Element.BlockCode(Element.BlockCode.Type.END, str , subelements)
+                            else -> Element.BlockCode(Element.BlockCode.Type.MIDDLE, str + "\n", subelements)
                         }
                         parents.add(element)
-                    }*/
-                    Log.e("MY_TAG=- ", "BLOCK CODE END")
-                    lastStartIndex = endIndex*/
+                    }
+                    lastStartIndex = endIndex
                 }
 
                 //11 -> NUMERIC LIST
