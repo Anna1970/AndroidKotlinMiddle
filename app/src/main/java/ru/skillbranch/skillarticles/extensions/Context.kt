@@ -1,10 +1,19 @@
 package ru.skillbranch.skillarticles.extensions
 
 import android.content.Context
+import android.content.res.Resources
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.util.Log
 import android.util.TypedValue
+import androidx.constraintlayout.widget.Constraints.TAG
+import kotlinx.android.synthetic.main.activity_root.*
+import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.ui.delegates.AttrValue
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 fun Context.dpToPx(dp: Int): Float {
     return TypedValue.applyDimension(
@@ -37,3 +46,10 @@ val Context.isNetworkAvailable: Boolean
             cm.activeNetworkInfo?.run { isConnectedOrConnecting } ?: false
         }
     }
+
+fun  Context.attrValue(attr: Int) : Int {
+    val tv = TypedValue()
+    if (this.theme.resolveAttribute(attr, tv, true)) return tv.data
+    else throw Resources.NotFoundException("Resource with id $attr not found")
+}
+

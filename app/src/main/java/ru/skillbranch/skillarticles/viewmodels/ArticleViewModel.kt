@@ -10,6 +10,7 @@ import ru.skillbranch.skillarticles.extensions.data.toAppSettings
 import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
 import ru.skillbranch.skillarticles.extensions.format
 import ru.skillbranch.skillarticles.extensions.indexesOf
+import ru.skillbranch.skillarticles.markdown.MarkdownParser
 import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
@@ -17,6 +18,7 @@ import ru.skillbranch.skillarticles.viewmodels.base.Notify
 class ArticleViewModel(private val articleID: String) :
     BaseViewModel<ArticleState>(ArticleState()), IArticleViewModel {
     private val repository = ArticleRepository
+    private var clearContent:String? = null
    // private var menuIsShown: Boolean = false
 
     init {
@@ -58,7 +60,7 @@ class ArticleViewModel(private val articleID: String) :
     }
 
     //load text from network
-    override fun getArticleContent(): LiveData<List<Any>?> {
+    override fun getArticleContent(): LiveData<String?> {
         return repository.loadArticleContent(articleID)
     }
 
@@ -132,7 +134,8 @@ class ArticleViewModel(private val articleID: String) :
 
     override fun handleSearch(query: String?) {
         query ?: return
-        val result = (currentState.content.firstOrNull() as? String)
+        if (clearContent == null) clearContent = MarkdownParser.clear(currentState.content)
+        val result = clearContent
             .indexesOf(query)
             .map {it to it + query.length}
         updateState { it.copy(searchQuery = query, searchResults = result, searchPosition = 0) }
@@ -155,7 +158,7 @@ class ArticleViewModel(private val articleID: String) :
     }*/
 }
 
-data class ArticleState (
+data class ArticleState(
     val isAuth: Boolean = false, //пользователь авторизован
     val isLoadingContent: Boolean = true, //content загружается
     val isLoadingReviews: Boolean = true,//отзывы загружаются
@@ -175,7 +178,7 @@ data class ArticleState (
     val date: String? = null, //дата публикации
     val author: Any? = null,//автор статьи
     val poster: String? = null, //обложка статьи
-    val content: List<Any> = emptyList(), //контент
+    val content: String? = null, //контент
     val reviews: List<Any> = emptyList()  //отзывы
 ) : IViewModelState {
     override fun save(outState: Bundle) {
