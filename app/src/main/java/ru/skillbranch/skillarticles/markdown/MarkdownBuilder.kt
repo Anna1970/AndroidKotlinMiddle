@@ -122,15 +122,6 @@ class MarkdownBuilder(context: Context) {
                     }
                 }
 
-                /*is Element.BlockCode -> {
-                    Log.e("-=BLOCK CODE=-", "Texy: ${element.text} Type: ${element.type}")
-                    inSpans(
-                        BlockCodeSpan(colorOnSurface, colorSurface, cornerRadius, gap, element.type)
-                    ){
-                        append(element.text)
-                    }
-                }*/
-
                 is Element.OrderedListItem -> {
                     inSpans(OrderedListSpan(gap, element.order, colorPrimary)) {
                         for (child in element.elements) {
@@ -139,7 +130,22 @@ class MarkdownBuilder(context: Context) {
                     }
                 }
 
-                else -> append(element.text)
+                is Element.BlockCode -> {
+                    /*Log.d("-=BLOCK CODE=-", "Texy: ${element.text} Type: ${element.type}")
+                    inSpans(
+                        BlockCodeSpan(colorOnSurface, colorSurface, cornerRadius, gap, element.type)
+                    ){
+                        for (child in element.elements) {
+                            buildElement(child, builder)
+                        }
+                   }*/
+                   // inSpans(BlockCodeSpan(Color.RED, Color.GREEN, cornerRadius, gap, element.type)){
+                    inSpans(BlockCodeSpan(colorOnSurface, colorSurface, cornerRadius, gap, element.type)){
+                        append(element.text)
+                    }
+                }
+
+                //else -> append(element.text)
             }
         }
     }

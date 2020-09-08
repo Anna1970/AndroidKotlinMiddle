@@ -190,12 +190,12 @@ object MarkdownParser {
 
                     text = string.subSequence(startIndex.plus(3), endIndex.plus(-3))
 
-                    val multistring = text.lines()//text.split("\n")
-                    lateinit var element:Element.BlockCode
+                    val multistring = text.lines()
+                    //lateinit var element:Element.BlockCode
 
                     multistring.forEachIndexed {index: Int, str: String ->
                         val subelements = findElements(str)
-                        element = when {
+                        val element = when {
                             multistring.count() == 1 -> Element.BlockCode(Element.BlockCode.Type.SINGLE, str, subelements)
                             index == 0 -> Element.BlockCode(Element.BlockCode.Type.START, str + "\n", subelements)
                             index == multistring.lastIndex -> Element.BlockCode(Element.BlockCode.Type.END, str , subelements)

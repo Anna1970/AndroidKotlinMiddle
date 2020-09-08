@@ -1,7 +1,6 @@
 package ru.skillbranch.skillarticles.markdown.spans
 
 import android.graphics.*
-import android.text.Spanned
 import android.text.style.ReplacementSpan
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
@@ -36,28 +35,80 @@ class BlockCodeSpan(
         bottom: Int,
         paint: Paint
     ) {
-        when (type) {
-            Element.BlockCode.Type.SINGLE -> {
-                /*paint.forBackground {
-                   rect.set(0f,
-                       top + padding,
-                        canvas.width.toFloat(),
-                        bottom - padding)
+        paint.forBackground {
+           when (type) {
+               Element.BlockCode.Type.SINGLE -> {
+                   rect.set(
+                       x,
+                       top.toFloat() + padding,
+                       canvas.width.toFloat(),
+                       bottom.toFloat() - padding
+                   )
                    canvas.drawRoundRect(
                        rect,
                        cornerRadius,
                        cornerRadius,
                        paint
                    )
-                }*/
+               }
 
-                paint.forText {
-                    canvas.drawText(text, 0, text.length, padding, y + padding, paint)
-                }
+               Element.BlockCode.Type.START -> {
+                   rect.set(
+                       x,
+                       top + padding,
+                       canvas.width.toFloat(),
+                       bottom.toFloat()
+                   )
+                   path.reset()
+                   path.addRoundRect(
+                       rect,
+                       floatArrayOf(
+                           cornerRadius, cornerRadius, // Top left radius in px
+                           cornerRadius, cornerRadius, // Top right radius in px
+                           0f, 0f, // Bottom right radius in px
+                           0f, 0f // Bottom left radius in px
+                       ),
+                       Path.Direction.CW
+                   )
+                   canvas.drawPath(path, paint)
+               }
+
+               Element.BlockCode.Type.MIDDLE -> {
+                   rect.set(
+                       x,
+                       top.toFloat(),
+                       canvas.width.toFloat(),
+                       bottom.toFloat()
+                   )
+                   canvas.drawRect(rect, paint)
+               }
+
+               Element.BlockCode.Type.END -> {
+                   rect.set(
+                       x,
+                       top.toFloat(),
+                       canvas.width.toFloat(),
+                       bottom - padding
+                   )
+                   path.reset()
+                   path.addRoundRect(
+                       rect,
+                       floatArrayOf(
+                           0f, 0f,
+                           0f, 0f,
+                           cornerRadius, cornerRadius,
+                           cornerRadius, cornerRadius
+                       ),
+                       Path.Direction.CW
+                   )
+                   canvas.drawPath(path,paint)
+               }
             }
-            Element.BlockCode.Type.START -> {}
-            Element.BlockCode.Type.MIDDLE -> {}
-            Element.BlockCode.Type.END -> {}
+
+        }
+
+        paint.forText {
+            canvas.drawText(text, start, end, x + padding, y.toFloat(), paint)
         }
     }
 
@@ -68,27 +119,36 @@ class BlockCodeSpan(
         end: Int,
         fm: Paint.FontMetricsInt?
     ): Int {
-        when (type) {
-            Element.BlockCode.Type.SINGLE -> {
-                paint.forText {
-                    val measureText = paint.measureText(text.toString(), start, end)
-                    fm?.ascent = (measureText * 0.85f- 2*padding).toInt()
-                    fm?.descent = (measureText * 0.85f + 2*padding).toInt()
+        if (fm != null) {
+            when (type) {
+                Element.BlockCode.Type.SINGLE -> {
+                    fm.ascent = (fm.ascent * 0.85f - 2 * padding).toInt()
+                    fm.descent = (fm.descent * 0.85f + 2 * padding).toInt()
                 }
-
-                return 0
+                Element.BlockCode.Type.START -> {
+                    fm.ascent = (fm.ascent * 0.85f - 2 * padding).toInt()
+                    fm.descent = (fm.descent * 0.85f).toInt()
+                }
+                Element.BlockCode.Type.MIDDLE -> {
+                    fm.ascent = (fm.ascent * 0.85f).toInt()
+                    fm.descent = (fm.descent * 0.85f).toInt()
+                }
+                Element.BlockCode.Type.END -> {
+                    fm.ascent = (fm.ascent * 0.85f).toInt()
+                    fm.descent = (fm.descent * 0.85f + 2 * padding).toInt()
+                }
             }
-            Element.BlockCode.Type.START -> {return 0}
-            Element.BlockCode.Type.MIDDLE -> {return 0}
-            Element.BlockCode.Type.END -> {return 0}
-            else -> error("Invalid Type")
         }
+        return 0
     }
 
     private inline fun Paint.forText(block: () -> Unit) {
         val oldColor = color
+
         color = textColor
+
         block()
+
         color = oldColor
     }
 
