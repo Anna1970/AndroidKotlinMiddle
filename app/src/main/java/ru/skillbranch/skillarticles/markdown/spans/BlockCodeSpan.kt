@@ -104,7 +104,6 @@ class BlockCodeSpan(
                    canvas.drawPath(path,paint)
                }
             }
-
         }
 
         paint.forText {
@@ -120,22 +119,24 @@ class BlockCodeSpan(
         fm: Paint.FontMetricsInt?
     ): Int {
         if (fm != null) {
+            //if (defaultAscent == 0) defaultAscent = fm.ascent
+            //if (defaultDescent == 0) defaultDescent = fm.descent
             when (type) {
                 Element.BlockCode.Type.SINGLE -> {
-                    fm.ascent = (fm.ascent * 0.85f - 2 * padding).toInt()
-                    fm.descent = (fm.descent * 0.85f + 2 * padding).toInt()
+                    fm.ascent = (paint.ascent() - 2 * padding).toInt()
+                    fm.descent = (paint.descent() + 2 * padding).toInt()
                 }
                 Element.BlockCode.Type.START -> {
-                    fm.ascent = (fm.ascent * 0.85f - 2 * padding).toInt()
-                    fm.descent = (fm.descent * 0.85f).toInt()
+                    fm.ascent = (paint.ascent() - 2 * padding).toInt()
+                    fm.descent = paint.descent().toInt()
                 }
                 Element.BlockCode.Type.MIDDLE -> {
-                    fm.ascent = (fm.ascent * 0.85f).toInt()
-                    fm.descent = (fm.descent * 0.85f).toInt()
+                    fm.ascent = paint.ascent().toInt()
+                    fm.descent = paint.descent().toInt()
                 }
                 Element.BlockCode.Type.END -> {
-                    fm.ascent = (fm.ascent * 0.85f).toInt()
-                    fm.descent = (fm.descent * 0.85f + 2 * padding).toInt()
+                    fm.ascent = paint.ascent().toInt()
+                    fm.descent = (paint.descent() + 2 * padding).toInt()
                 }
             }
         }
@@ -143,13 +144,20 @@ class BlockCodeSpan(
     }
 
     private inline fun Paint.forText(block: () -> Unit) {
+        val oldSize = textSize
+        val oldStyle = typeface?.style ?: 0
+        val oldFont = typeface
         val oldColor = color
 
         color = textColor
+        typeface = Typeface.create(Typeface.MONOSPACE, oldStyle)
+        textSize *= 0.85f
 
         block()
 
         color = oldColor
+        typeface = oldFont
+        textSize = oldSize
     }
 
     private inline fun Paint.forBackground(block: () -> Unit) {
