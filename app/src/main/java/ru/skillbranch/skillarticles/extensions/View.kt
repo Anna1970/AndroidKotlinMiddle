@@ -12,3 +12,9 @@ fun View.setMarginOptionally(left:Int = marginLeft, top : Int = marginTop, right
     param.setMargins(left, top, right, bottom)
     this.layoutParams = param
 }
+
+fun View.setPaddingOptionally(left: Int = paddingLeft, top: Int = paddingTop,
+                              right: Int = paddingRight, bottom: Int = paddingBottom)
+{
+    setPadding(left , top , right, bottom)
+}

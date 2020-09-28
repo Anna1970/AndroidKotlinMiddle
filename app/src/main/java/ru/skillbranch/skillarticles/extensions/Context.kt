@@ -1,13 +1,14 @@
 package ru.skillbranch.skillarticles.extensions
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
-import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.util.Log
 import android.util.TypedValue
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.constraintlayout.widget.Constraints.TAG
 import kotlinx.android.synthetic.main.activity_root.*
 import ru.skillbranch.skillarticles.R
@@ -51,5 +52,10 @@ fun  Context.attrValue(attr: Int) : Int {
     val tv = TypedValue()
     if (this.theme.resolveAttribute(attr, tv, true)) return tv.data
     else throw Resources.NotFoundException("Resource with id $attr not found")
+}
+
+fun Context.hideKeyboard(view: View) {
+    val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
