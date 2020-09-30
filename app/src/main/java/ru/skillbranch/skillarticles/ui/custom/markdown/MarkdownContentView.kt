@@ -53,7 +53,7 @@ class MarkdownContentView @JvmOverloads constructor(
         val right = paddingLeft + bodyWidth
 
         children.forEach {
-            if (it is MarkDownTextView){
+            if (it is MarkdownTextView){
                 it.layout(
                     left - paddingLeft / 2,
                     usedHeight,
@@ -77,7 +77,7 @@ class MarkdownContentView @JvmOverloads constructor(
         content.forEach {
             when (it) {
                 is MarkdownElement.Text -> {
-                    val tv = MarkDownTextView(context, textSize).apply {
+                    val tv = MarkdownTextView(context, textSize).apply {
                         setPaddingOptionally(
                             left = padding,
                             right = padding

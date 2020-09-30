@@ -17,7 +17,7 @@ import ru.skillbranch.skillarticles.extensions.dpToIntPx
 
 @SuppressLint("ViewConstructor", "AppCompatCustomView")
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-class MarkDownTextView constructor(
+class MarkdownTextView constructor(
     context: Context,
     fontSize: Float,
     mockHelper: SearchBgHelper? = null //for mock
@@ -61,3 +61,4 @@ class MarkDownTextView constructor(
         super.onDraw(canvas)
     }
 }
+

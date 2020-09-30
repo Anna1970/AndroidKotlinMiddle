@@ -44,7 +44,7 @@ class MarkdownCodeView private constructor(
     val iv_copy: ImageView
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val iv_switch: ImageView
-    private val tv_codeView: MarkDownTextView
+    private val tv_codeView: MarkdownTextView
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val sv_scroll: HorizontalScrollView
 
@@ -85,7 +85,7 @@ class MarkdownCodeView private constructor(
         }
 
     init {
-        tv_codeView = MarkDownTextView(context, fontSize * 0.85f).apply {
+        tv_codeView = MarkdownTextView(context, fontSize * 0.85f).apply {
             typeface = Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
             setTextColor(textColor)
             setPaddingOptionally(right = textExtraPadding)
