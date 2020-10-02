@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.text.Layout
 import android.text.Spanned
+import androidx.annotation.VisibleForTesting
 import androidx.core.graphics.ColorUtils
 import androidx.core.text.getSpans
 import ru.skillbranch.skillarticles.R
@@ -15,6 +16,7 @@ import ru.skillbranch.skillarticles.ui.custom.spans.HeaderSpan
 import ru.skillbranch.skillarticles.ui.custom.spans.SearchFocusSpan
 import ru.skillbranch.skillarticles.ui.custom.spans.SearchSpan
 
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 class SearchBgHelper (
     context: Context,
     private val focusListener: ((Int, Int) -> Unit)? = null,
@@ -180,8 +182,8 @@ class SingleLineRender(
     padding: Int,
     val drawable: Drawable
 ): SearchBgRender(padding) {
-    private var lineBottom: Int = 0
     private var lineTop: Int = 0
+    private var lineBottom: Int = 0
 
     override fun draw(
         canvas: Canvas,
@@ -206,8 +208,8 @@ class MultiLineRender(
     val drawableMiddle: Drawable,
     val drawableRights: Drawable
 ): SearchBgRender(padding) {
-    private var lineBottom: Int = 0
     private var lineTop: Int = 0
+    private var lineBottom: Int = 0
     private var lineEndOffset: Int = 0
     private var lineStartOffset: Int = 0
 

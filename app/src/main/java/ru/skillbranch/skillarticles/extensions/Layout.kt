@@ -2,18 +2,29 @@ package ru.skillbranch.skillarticles.extensions
 
 import android.text.Layout
 
+/**
+ * Get the line height
+ */
 fun Layout.getLineHeight(line: Int): Int {
-    return getLineTop(line + 1) -getLineTop(line)
+    return getLineTop(line.inc()) -getLineTop(line)
 }
+
+/**
+ * Returns the top of the Layout after removing the extra padding applied by the Layout
+ */
 
 fun Layout.getLineTopWithoutPadding(line: Int): Int {
     var lineTop = getLineTop(line)
     if (line == 0) {
         lineTop -= topPadding
     }
+    bottomPadding
     return lineTop
 }
 
+/**
+ * Returns thebottom of the layout after removing the extra padding applied by layout
+ */
 fun Layout.getLineBottomWithoutPadding(line: Int): Int {
     var lineBottom = getLineBottomWithoutSpacing(line)
     if (line == lineCount.dec()) {
@@ -22,13 +33,16 @@ fun Layout.getLineBottomWithoutPadding(line: Int): Int {
     return lineBottom
 }
 
+/**
+ * Get line bottom discarding the line spacing added
+ */
 fun Layout.getLineBottomWithoutSpacing(line: Int) : Int {
     val  lineBottom = getLineBottom(line)
     val  isLastLine = line ==lineCount.dec()
     val hasLineSpacing = spacingAdd != 0f
 
     return if (!hasLineSpacing || isLastLine) {
-        lineBottom + spacingAdd.toInt()
+        lineBottom //+ spacingAdd.toInt()
     } else {
         lineBottom - spacingAdd.toInt()
     }
