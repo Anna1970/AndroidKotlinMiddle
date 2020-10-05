@@ -1,15 +1,20 @@
 package ru.skillbranch.skillarticles.ui.custom.markdown
 
 import android.content.Context
+import android.os.Parcelable
+import android.os.Parcel
 import android.util.AttributeSet
-//import android.view.View
+import android.util.SparseArray
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.ViewCompat
 import androidx.core.view.children
+import androidx.core.view.forEachIndexed
+import androidx.core.view.size
+import kotlinx.android.synthetic.main.activity_root.view.*
 import ru.skillbranch.skillarticles.data.repositories.MarkdownElement
-import ru.skillbranch.skillarticles.extensions.dpToIntPx
-import ru.skillbranch.skillarticles.extensions.groupByBounds
-import ru.skillbranch.skillarticles.extensions.setPaddingOptionally
+import ru.skillbranch.skillarticles.extensions.*
 import kotlin.properties.Delegates
 
 class MarkdownContentView @JvmOverloads constructor(
@@ -163,5 +168,59 @@ class MarkdownContentView @JvmOverloads constructor(
     fun setCopyListener(listener: (String) -> Unit) {
         children.filterIsInstance<MarkdownCodeView>()
             .forEach { it.copyListener = listener}
+    }
+
+    override fun onSaveInstanceState(): Parcelable? {
+        return SavedState(super.onSaveInstanceState()).apply {
+            ids = IntArray(tv_text_content.size).apply {
+                fill(-1, 0, size)
+            }.toCollection(ArrayList())
+            tv_text_content.forEachIndexed { index, view ->
+                if (view.id < 0) view.id = View.generateViewId()
+                ids[index] = view.id
+            }
+
+            childrenStates = saveChildViewStates()
+        }
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable) {
+        if (state is SavedState) {
+            super.onRestoreInstanceState(state.superState)
+            ids = state.ids
+            tv_text_content.forEachIndexed { index, view ->
+                if (view.id < 0) view.id = ids[index]
+            }
+            state.childrenStates?.let { restoreChildViewStates(it) }
+        } else {
+            super.onRestoreInstanceState(state)
+        }
+    }
+
+
+    private class SavedState : BaseSavedState{
+        var ids: ArrayList<Int> = arrayListOf<Int>()
+        var childrenStates : SparseArray<Parcelable>? = null
+
+
+        constructor(superState: Parcelable?) : super(superState)
+
+        constructor(src: Parcel) : super(src) {
+            val idsArray = intArrayOf()
+            src.readIntArray(idsArray)
+            ids = idsArray.toCollection(ArrayList())
+            childrenStates = src.readSparseArray(javaClass.classLoader)
+        }
+
+        override fun writeToParcel(dst: Parcel, flags: Int) {
+            super.writeToParcel(dst, flags)
+            dst.writeIntArray(ids.toIntArray())
+            dst.writeSparseArray(childrenStates as SparseArray<Any>)
+        }
+
+        companion object CREATOR : Parcelable.Creator<SavedState> {
+            override fun createFromParcel(parcel: Parcel) = SavedState(parcel)
+            override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
+        }
     }
 }

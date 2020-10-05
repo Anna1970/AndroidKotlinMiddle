@@ -3,7 +3,10 @@ package ru.skillbranch.skillarticles.ui.custom.markdown
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
+import android.os.Parcel
+import android.os.Parcelable
 import android.text.Spannable
+import android.util.SparseArray
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
@@ -45,23 +48,31 @@ class MarkdownImageView private constructor(
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val iv_image: ImageView
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val tv_title: MarkdownTextView
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var tv_alt: TextView? = null
 
     @Px
     private val titleTopMargin: Int = context.dpToIntPx(8)
+
     @Px
     private val titlePadding: Int = context.dpToIntPx(56)
+
     @Px
     private val cornerRadius: Float = context.dpToPx(4)
+
     @Px
     private val colorSurface: Int = context.attrValue(R.attr.colorSurface)
+
     @Px
     private val colorOnSurface: Int = context.attrValue(R.attr.colorOnSurface)
+
     @Px
     private val colorOnBackground: Int = context.attrValue(R.attr.colorOnBackground)
+
     @Px
     private val lineColor: Int = context.getColor(R.color.color_divider)
 
@@ -156,7 +167,7 @@ class MarkdownImageView private constructor(
 
         usedHeight += iv_image.measuredHeight
         usedHeight += titleTopMargin
-        linePositionY = usedHeight + tv_title.measuredHeight/2f
+        linePositionY = usedHeight + tv_title.measuredHeight / 2f
         usedHeight += tv_title.measuredHeight
 
         setMeasuredDimension(width, usedHeight)
@@ -220,7 +231,7 @@ class MarkdownImageView private constructor(
         val endRadius = hypot(tv_alt?.width?.toFloat() ?: 0f, tv_alt?.height?.toFloat() ?: 0f)
         val va = ViewAnimationUtils.createCircularReveal(
             tv_alt,
-            tv_alt?.width ?:0,
+            tv_alt?.width ?: 0,
             tv_alt?.height ?: 0,
             0f,
             endRadius
@@ -232,13 +243,55 @@ class MarkdownImageView private constructor(
         val endRadius = hypot(tv_alt?.width?.toFloat() ?: 0f, tv_alt?.height?.toFloat() ?: 0f)
         val va = ViewAnimationUtils.createCircularReveal(
             tv_alt,
-            tv_alt?.width ?:0,
+            tv_alt?.width ?: 0,
             tv_alt?.height ?: 0,
             endRadius,
             0f
         )
         va.doOnEnd { tv_alt?.isVisible = false }
         va.start()
+    }
+
+    override fun onSaveInstanceState(): Parcelable? {
+        val savedState = SavedState(super.onSaveInstanceState())
+        savedState.ssIsAltVisible = tv_alt?.isVisible ?: false
+        return savedState
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state is SavedState) tv_alt?.isVisible = state.ssIsAltVisible
+        super.onRestoreInstanceState(state)
+    }
+
+    private class SavedState : View.BaseSavedState, Parcelable {
+
+        var ssIsAltVisible = false
+
+        constructor(superState: Parcelable?) : super(superState)
+
+        constructor(src: Parcel) : super(src) {
+            ssIsAltVisible = src.readInt() == 1
+        }
+
+        override fun writeToParcel(out: Parcel, flags: Int) {
+            super.writeToParcel(out, flags)
+            out.writeInt(if (ssIsAltVisible) 1 else 0)
+        }
+
+        override fun describeContents(): Int = 0
+
+        companion object CREATOR : Parcelable.Creator<SavedState> {
+            override fun createFromParcel(source: Parcel) = SavedState(source)
+            override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
+        }
+    }
+
+    override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
+        dispatchFreezeSelfOnly(container)
+    }
+
+    override fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
+        dispatchThawSelfOnly(container)
     }
 }
 
