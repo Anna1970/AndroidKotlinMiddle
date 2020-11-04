@@ -86,7 +86,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         val avatarSize = root.dpToIntPx(40)
         val cornerRadius = root.dpToIntPx(8)
 
-
         Glide.with(root)
             .load(args.authorAvatar)
             .apply(circleCropTransform())
