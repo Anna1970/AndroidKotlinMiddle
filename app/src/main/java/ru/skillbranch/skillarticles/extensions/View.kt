@@ -9,6 +9,8 @@ import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.core.view.marginTop
 import androidx.core.view.children
+import androidx.navigation.NavDestination
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 fun View.setMarginOptionally(left:Int = marginLeft, top : Int = marginTop, right : Int = marginRight, bottom : Int = marginBottom) {
     val param = this.layoutParams as ViewGroup.MarginLayoutParams

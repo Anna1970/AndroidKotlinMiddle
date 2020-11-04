@@ -1,12 +1,15 @@
 package ru.skillbranch.skillarticles.data.repositories
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import ru.skillbranch.skillarticles.data.*
 
 object ArticleRepository {
     private val local = LocalDataHolder
     private val network = NetworkDataHolder
+
+    fun isAuth(): MutableLiveData<Boolean> = local.isAuth()
 
     fun loadArticleContent(articleId: String): LiveData<List<MarkdownElement>?> {
         return Transformations.map(network.loadArticleContent(articleId)) {
