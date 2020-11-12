@@ -33,3 +33,7 @@ fun ViewGroup.saveChildViewStates(): SparseArray<Parcelable> {
 fun ViewGroup.restoreChildViewStates(childViewStates: SparseArray<Parcelable>) {
     children.forEach { child -> child.restoreHierarchyState(childViewStates) }
 }
+
+fun BottomNavigationView.selectDestination(destination: NavDestination) {
+    menu.findItem(destination.id)?.isChecked = true
+}

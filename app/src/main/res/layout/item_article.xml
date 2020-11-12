@@ -18,8 +18,8 @@
 
     <TextView
         android:id="@+id/tv_author"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="291dp"
+        android:layout_height="14dp"
         android:layout_marginStart="16dp"
         android:textColor="?attr/colorPrimary"
         android:textSize="12sp"
