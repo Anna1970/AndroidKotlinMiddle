@@ -83,6 +83,13 @@ class ArticleViewModel(
         return repository.loadArticlePersonalInfo(articleID)
     }
 
+    // session state
+   /* fun handleToggleMenu() {
+        updateState { state ->
+            state.copy(isShowMenu = !state.isShowMenu).also { menuIsShown = !state.isShowMenu }
+        }
+    }*/
+
     //app settings
     override fun handleNightMode() {
         val settings = currentState.toAppSettings()
@@ -165,6 +172,7 @@ class ArticleViewModel(
 
     override fun handleSendComment() {
         if (!currentState.isAuth) navigate(NavigationCommand.StartLogin())
+        //TODO send comment
     }
 }
 

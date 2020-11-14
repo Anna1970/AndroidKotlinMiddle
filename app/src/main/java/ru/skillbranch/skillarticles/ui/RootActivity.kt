@@ -44,6 +44,10 @@ class RootActivity : BaseActivity<RootViewModel>() {
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             //if destination change set select bottom navigation item
+            if (destination.id == R.id.nav_profile && controller.currentDestination?.id == R.id.auth) {
+                val authEntry = controller.getBackStackEntry(R.id.auth)
+                controller.popBackStack(R.id.nav_profile, true)
+            }
             nav_view.selectDestination(destination)
         }
           /*  if (viewModel.currentState.isAuth && destination.id == R.id.nav_auth) {
@@ -62,12 +66,14 @@ class RootActivity : BaseActivity<RootViewModel>() {
         else snackbar.anchorView = nav_view
 
         when (notify) {
+            is Notify.TextMessage -> {/* nothing */}
             is Notify.ActionMessage -> {
                 val (_, label, handler) = notify
 
                 with(snackbar) {
                     setActionTextColor(getColor(R.color.color_accent_dark))
-                    setAction(label) {handler.invoke()}
+                    //setAction(label) {handler.invoke()}
+                    setAction(notify.actionLabel) {notify.actionHandler.invoke()}
                 }
             }
             is Notify.ErrorMessage -> {
@@ -77,8 +83,11 @@ class RootActivity : BaseActivity<RootViewModel>() {
                     setBackgroundTint(getColor(R.color.design_default_color_error))
                     setTextColor(getColor(android.R.color.white))
                     setActionTextColor(getColor(android.R.color.white))
-                    handler ?: return@with
-                    setAction(label) {handler.invoke()}
+                    /*handler ?: return@with
+                    setAction(label) {handler.invoke()}*/
+                    setAction(notify.errLabel) {
+                        notify.errHandler?.invoke()
+                    }
                 }
             }
         }

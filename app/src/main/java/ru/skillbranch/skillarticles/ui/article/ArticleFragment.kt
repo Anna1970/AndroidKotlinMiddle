@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
@@ -45,6 +46,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         )
     }
     override val layout: Int = R.layout.fragment_article
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     override val binding: ArticleBinding by lazy { ArticleBinding() }
     override val prepareToolbar: (ToolbarBuilder.() -> Unit)? = {
         this.setTitle(args.title)
