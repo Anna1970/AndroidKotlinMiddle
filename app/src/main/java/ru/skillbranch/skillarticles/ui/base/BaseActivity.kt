@@ -6,6 +6,9 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toolbar
+import androidx.annotation.DrawableRes
+import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -51,19 +54,6 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
         navController = findNavController(R.id.nav_host_fragment)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        viewModel.saveState()
-        super.onSaveInstanceState(outState)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        viewModel.restoreState()
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp() || super.onSupportNavigateUp()
-    }
 
     private fun subscribeOnNavigation(command: NavigationCommand) {
         when (command) {
@@ -78,17 +68,32 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
 
             is NavigationCommand.FinishLogin -> {
                 navController.navigate(R.id.finish_login)
-                if(command.privateDestination!=null) navController.navigate(command.privateDestination)
+                //if(command.privateDestination!=null) navController.navigate(command.privateDestination)
+                command.privateDestination?.let { navController.navigate(it) }
             }
 
             is NavigationCommand.StartLogin -> {
                 navController.navigate(
                     R.id.start_login,
-                    bundleOf("private_destination" to (command.privateDestination ?: -1)),
-                    navOptions { launchSingleTop = true }
+                    bundleOf("private_destination" to (command.privateDestination ?: -1))/*,
+                    navOptions { launchSingleTop = true }*/
                 )
             }
         }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        viewModel.restoreState()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        viewModel.saveState()
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }
 
@@ -178,9 +183,9 @@ class ToolbarBuilder() {
 
 data class MenuItemHolder(
     val title: String,
-    val menuId: Int,
-    val icon: Int,
-    val actionViewLayout: Int? = null,
+    @IdRes val menuId: Int,
+    @DrawableRes val icon: Int,
+    @LayoutRes val actionViewLayout: Int? = null,
     val clickListener: ((MenuItem) -> Unit)? = null
 )
 

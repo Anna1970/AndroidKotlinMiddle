@@ -10,7 +10,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_article.*
-import kotlinx.android.synthetic.main.item_article.iv_poster
+//import kotlinx.android.synthetic.main.item_article.iv_poster
 import ru.skillbranch.skillarticles.data.ArticleItemData
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.format

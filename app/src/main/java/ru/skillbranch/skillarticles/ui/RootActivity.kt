@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.layout_bottombar.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.selectDestination
 import ru.skillbranch.skillarticles.ui.base.BaseActivity
+import ru.skillbranch.skillarticles.ui.custom.Bottombar
 import ru.skillbranch.skillarticles.viewmodels.RootViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
@@ -44,26 +45,29 @@ class RootActivity : BaseActivity<RootViewModel>() {
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             //if destination change set select bottom navigation item
-            if (destination.id == R.id.nav_profile && controller.currentDestination?.id == R.id.auth) {
+            /*if (destination.id == R.id.nav_profile && controller.currentDestination?.id == R.id.auth) {
                 val authEntry = controller.getBackStackEntry(R.id.auth)
                 controller.popBackStack(R.id.nav_profile, true)
             }
             nav_view.selectDestination(destination)
-        }
-          /*  if (viewModel.currentState.isAuth && destination.id == R.id.nav_auth) {
-                controller.popBackStack()
-                val privateDestination = arguments?.get("private_destination") as Int?
-                privateDestination?.let { controller.navigate(it) }
-            }
-
         }*/
+            if (viewModel.currentState.isAuth && destination.id == R.id.nav_auth) {
+                controller.popBackStack()
+                /*val privateDestination = arguments?.get("private_destination") as Int?
+                privateDestination?.let { controller.navigate(it) }*/
+                viewModel.navigate(NavigationCommand.To(R.id.nav_profile, arguments))
+            }
+            nav_view.selectDestination(destination)
+        }
     }
 
     override fun renderNotification(notify: Notify) {
         val snackbar = Snackbar.make(container, notify.message, Snackbar.LENGTH_LONG)
 
-        if(bottombar!=null) snackbar.anchorView = bottombar
-        else snackbar.anchorView = nav_view
+        /*if(bottombar!=null) snackbar.anchorView = bottombar
+        else snackbar.anchorView = nav_view*/
+
+        snackbar.anchorView = findViewById<Bottombar?>(R.id.bottombar) ?: nav_view
 
         when (notify) {
             is Notify.TextMessage -> {/* nothing */}

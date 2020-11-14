@@ -35,5 +35,8 @@ fun ViewGroup.restoreChildViewStates(childViewStates: SparseArray<Parcelable>) {
 }
 
 fun BottomNavigationView.selectDestination(destination: NavDestination) {
-    menu.findItem(destination.id)?.isChecked = true
+    //menu.findItem(destination.id)?.isChecked = true
+    menu.findItem(destination.id)?.let {
+        it.isChecked = true
+    } ?: run { menu.children.last().isChecked = true }
 }

@@ -64,6 +64,7 @@ class ArticleViewModel(
                 isBigText = settings.isBigText
             )
         }
+
         subscribeOnDataSource(repository.isAuth()) { auth, state ->
             state.copy(isAuth = auth)
         }

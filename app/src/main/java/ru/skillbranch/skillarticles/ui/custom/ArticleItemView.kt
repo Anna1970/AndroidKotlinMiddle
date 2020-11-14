@@ -171,7 +171,7 @@ class ArticleItemView @JvmOverloads constructor(
         //tv_description
         tvDescription.maxWidth = width - (paddingLeft + paddingRight)
         measureChild(tvDescription, widthMeasureSpec, heightMeasureSpec)
-        usedHeight += tvDescription.measuredHeight + marginTop
+        usedHeight += tvDescription.measuredHeight + 2 * marginTop
 
         //icons
         measureChild(ivLikes, widthMeasureSpec, heightMeasureSpec)
@@ -185,6 +185,7 @@ class ArticleItemView @JvmOverloads constructor(
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        var usedHeight = paddingTop
 
         tvDate.layout(
             paddingLeft,
@@ -193,8 +194,6 @@ class ArticleItemView @JvmOverloads constructor(
             tvDate.measuredHeight + paddingTop
         )
 
-        var usedHeight = paddingTop
-
         tvAuthor.layout(
             tvDate.right + marginStart_16,
             usedHeight,
@@ -202,7 +201,7 @@ class ArticleItemView @JvmOverloads constructor(
             usedHeight + tvAuthor.measuredHeight
         )
 
-        usedHeight += max(tvDate.measuredHeight, tvAuthor.measuredHeight)
+        usedHeight += max(tvDate.measuredHeight, tvAuthor.measuredHeight) + marginTop
 
         val heightPosterCategory = posterSize + categorySize / 2
 
