@@ -167,7 +167,7 @@ class ArticleItemView @JvmOverloads constructor(
         tvTitle.maxWidth =
             width - (paddingRight + paddingLeft + sizeOfPosterAndCategoryImage + context.dpToIntPx(8))
         measureChild(tvTitle, widthMeasureSpec, heightMeasureSpec)
-        usedHeight += marginTop + max(tvTitle.measuredHeight, sizeOfPosterAndCategoryImage)
+        usedHeight += max(tvTitle.measuredHeight, sizeOfPosterAndCategoryImage) //marginTop + max(tvTitle.measuredHeight, sizeOfPosterAndCategoryImage)
 
         //tv_description
         tvDescription.maxWidth = width - (paddingLeft + paddingRight)
@@ -202,7 +202,7 @@ class ArticleItemView @JvmOverloads constructor(
             usedHeight + tvAuthor.measuredHeight
         )
 
-        usedHeight += max(tvDate.measuredHeight, tvAuthor.measuredHeight) + marginTop
+        usedHeight += max(tvDate.measuredHeight, tvAuthor.measuredHeight) //+ marginTop
 
         val heightPosterCategory = posterSize + categorySize / 2
 
