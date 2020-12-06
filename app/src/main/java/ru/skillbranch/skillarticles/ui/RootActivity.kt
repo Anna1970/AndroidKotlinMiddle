@@ -51,13 +51,16 @@ class RootActivity : BaseActivity<RootViewModel>() {
             }
             nav_view.selectDestination(destination)
         }*/
+            nav_view.selectDestination(destination)
             if (viewModel.currentState.isAuth && destination.id == R.id.nav_auth) {
                 controller.popBackStack()
-                /*val privateDestination = arguments?.get("private_destination") as Int?
-                privateDestination?.let { controller.navigate(it) }*/
-                viewModel.navigate(NavigationCommand.To(R.id.nav_profile, arguments))
+                val privateDestination = arguments?.get("private_destination") as Int?
+                if (privateDestination != null) controller.navigate(privateDestination)
+                /*privateDestination?.let { controller.navigate(it) }
+                viewModel.navigate(NavigationCommand.To(R.id.nav_profile, arguments))*/
+
             }
-            nav_view.selectDestination(destination)
+
         }
     }
 
