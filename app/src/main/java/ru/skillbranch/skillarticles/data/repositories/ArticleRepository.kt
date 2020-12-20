@@ -16,8 +16,6 @@ object ArticleRepository {
     private val local = LocalDataHolder
     private val network = NetworkDataHolder
 
-    fun isAuth(): MutableLiveData<Boolean> = local.isAuth()
-
     fun loadArticleContent(articleId: String): LiveData<List<MarkdownElement>?> {
         return Transformations.map(network.loadArticleContent(articleId)) {
             return@map  if (it == null) null
@@ -40,6 +38,8 @@ object ArticleRepository {
     fun updateArticlePersonalInfo(info: ArticlePersonalInfo) {
         local.updateArticlePersonalInfo(info)
     }
+
+    fun isAuth(): MutableLiveData<Boolean> = local.isAuth()
 
     fun allComments(articleId: String, totalCount: Int) =
         CommentsDataFactory(

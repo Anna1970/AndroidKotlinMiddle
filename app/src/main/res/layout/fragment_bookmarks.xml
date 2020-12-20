@@ -8,5 +8,5 @@
     android:layout_height="match_parent"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     tools:context=".ui.bookmarks.BookmarksFragment"
-    tools:itemCount="4"
+    tools:itemCount="5"
     tools:listitem="@layout/item_article" />

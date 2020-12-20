@@ -1,7 +1,6 @@
 package ru.skillbranch.skillarticles.ui.articles
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
@@ -36,21 +35,25 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
         )
     }
 
-    private val articlesAdapter = ArticlesAdapter { item ->
-        Log.e("ArticlesFragment", "click on article: ${item.id}")
-        val action = ArticlesFragmentDirections.actionNavArticlesToPageArticle(
-            item.id,
-            item.author,
-            item.authorAvatar,
-            item.category,
-            item.categoryIcon,
-            item.poster,
-            item.title,
-            item.date
-        )
+    private val articlesAdapter = ArticlesAdapter(
+        listener = { item ->
+            val direction = ArticlesFragmentDirections.actionNavArticlesToPageArticle(
+                item.id,
+                item.author,
+                item.authorAvatar,
+                item.category,
+                item.categoryIcon,
+                item.poster,
+                item.title,
+                item.date
+            )
 
-        viewModel.navigate(NavigationCommand.To(action.actionId, action.arguments))
-    }
+            viewModel.navigate(NavigationCommand.To(direction.actionId, direction.arguments))
+        },
+        bookmarkListener = { id, checked ->
+            viewModel.handleToggleBookmark(id, checked)
+        }
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

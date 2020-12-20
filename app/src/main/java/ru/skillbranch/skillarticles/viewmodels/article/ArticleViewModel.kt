@@ -1,5 +1,6 @@
 package ru.skillbranch.skillarticles.viewmodels.article
 
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
@@ -28,8 +29,7 @@ import java.util.concurrent.Executors
 class ArticleViewModel(
     handle: SavedStateHandle,
     private val articleID: String
-) :
-    BaseViewModel<ArticleState>(
+) : BaseViewModel<ArticleState>(
         handle,
         ArticleState()
     ), IArticleViewModel {
@@ -103,13 +103,6 @@ class ArticleViewModel(
     override fun getArticlePersonalInfo(): LiveData<ArticlePersonalInfo?> {
         return repository.loadArticlePersonalInfo(articleID)
     }
-
-    // session state
-   /* fun handleToggleMenu() {
-        updateState { state ->
-            state.copy(isShowMenu = !state.isShowMenu).also { menuIsShown = !state.isShowMenu }
-        }
-    }*/
 
     //app settings
     override fun handleNightMode() {
@@ -192,12 +185,14 @@ class ArticleViewModel(
     }
 
     override fun handleSendComment(comment: String) {
+        updateState { it.copy(commentText = comment) }
+        saveState()
         if (!currentState.isAuth) navigate(NavigationCommand.StartLogin())
         else {
             viewModelScope.launch {
                 repository.sendComment(articleID, comment, currentState.answerToSlug)
                 withContext(Dispatchers.Main) {
-                    updateState { it.copy(answerTo = null, answerToSlug = null) }
+                    updateState { it.copy(answerTo = null, answerToSlug = null, commentText = null) }
                 }
             }
         }
@@ -226,7 +221,7 @@ class ArticleViewModel(
     }
 
     fun handleClearComment() {
-        updateState { it.copy(answerTo = null, answerToSlug = null) }
+        updateState { it.copy(answerTo = null, answerToSlug = null, commentText = null) }
     }
 
     fun handleReplayTo(slug: String, name: String) {
@@ -255,6 +250,7 @@ data class ArticleState(
     val author: Any? = null,//автор статьи
     val poster: String? = null, //обложка статьи
     val content: List<MarkdownElement> = emptyList(), //String? = null //контент
+    val commentText: String? = null,
     val commentsCount: Int = 0,
     val answerTo: String? = null,
     val answerToSlug: String? = null,
@@ -265,6 +261,10 @@ data class ArticleState(
         outState.set("searchQuery", searchQuery)
         outState.set("searchResults", searchResults)
         outState.set("searchPosition", searchPosition)
+        outState.set("commentText", commentText)
+        outState.set("answerTo", answerTo)
+        outState.set("answerToSlug", answerToSlug)
+        Log.e("ArticleViewModel", "Saved comment: $commentText")
     }
 
     override fun restore(savedState: SavedStateHandle): ArticleState {
@@ -272,7 +272,12 @@ data class ArticleState(
             isSearch = savedState["isSearch"]  ?: false,
             searchQuery =  savedState["searchQuery"],
             searchResults = savedState["searchResults"]  ?: emptyList(),
-            searchPosition =  savedState["searchPosition"]  ?: 0
-        )
+            searchPosition =  savedState["searchPosition"]  ?: 0,
+            commentText = savedState["commentText"],
+            answerTo = savedState["answerTo"],
+            answerToSlug = savedState["answerToSlug"]
+        ).also {
+            Log.e("ArticleViewModel", "Restored comment: ${it.commentText}")
+        }
     }
 }

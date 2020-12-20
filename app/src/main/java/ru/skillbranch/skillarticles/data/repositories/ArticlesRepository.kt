@@ -39,16 +39,47 @@ object ArticlesRepository {
         local.localArticleItems.addAll(articles)
             .apply { sleep(100) }
     }
+
+    fun bookmarksArticles(): ArticlesDataFactory {
+        return ArticlesDataFactory(ArticleStrategy.BookmarkArticles(::findBookmarksByRange))
+    }
+
+    fun searchBookmarks(searchQuery: String) =
+        ArticlesDataFactory(ArticleStrategy.SearchBookmark(::findBookmarksByTitle, searchQuery))
+
+    private fun findBookmarksByTitle(start: Int, size: Int, queryTitle: String): List<ArticleItemData> =
+        local.localArticleItems
+            .filter { it.isBookmark }
+            .asSequence()
+            .filter { it.title.contains(queryTitle, ignoreCase = true) }
+            .drop(start)
+            .take(size)
+            .toList()
+
+    private fun findBookmarksByRange(start: Int, size: Int): List<ArticleItemData> =
+        local.localArticleItems
+            .filter { it.isBookmark }
+            .drop(start)
+            .take(size)
+
+    fun updateBookmark(id: String, isChecked: Boolean){
+        val item = local.localArticleItems.find { it.id == id }
+        val index = local.localArticleItems.indexOf(item)
+        local.localArticleItems[index] = item!!.copy(isBookmark = isChecked)
+    }
 }
 
 class ArticlesDataFactory(val strategy: ArticleStrategy) : DataSource.Factory<Int, ArticleItemData>() {
     override fun create(): DataSource<Int, ArticleItemData> = ArticleDataSource(strategy)
 }
 
-class ArticleDataSource(private val strategy: ArticleStrategy) : PositionalDataSource<ArticleItemData>() {
+class ArticleDataSource(
+    private val strategy: ArticleStrategy
+) : PositionalDataSource<ArticleItemData>() {
     override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<ArticleItemData>) {
         val result = strategy.getItems(params.requestedStartPosition, params.requestedLoadSize)
-        Log.e("ArticlesRepository", "loadInitial: start = ${params.requestedStartPosition} size = ${params.requestedLoadSize} resultSize = ${result.size}")
+        Log.e("ArticlesRepository",
+            "loadInitial: start = ${params.requestedStartPosition} size = ${params.requestedLoadSize} resultSize = ${result.size}")
         callback.onResult(result, params.requestedStartPosition)
     }
 
@@ -75,13 +106,18 @@ sealed class ArticleStrategy {
     }
 
     //bookmarks strategy
-    class BookmarkArticles(private val itemProvider: (Int, Int) -> List<ArticleItemData>): ArticleStrategy() {
+    class BookmarkArticles(
+        private val itemProvider: (Int, Int) -> List<ArticleItemData>
+    ): ArticleStrategy() {
         override fun getItems(start: Int, size: Int): List<ArticleItemData> {
             return itemProvider(start, size)
         }
     }
 
-    class SearchBookmark(private val itemProvider: (Int, Int, String) -> List<ArticleItemData>, private val query: String): ArticleStrategy() {
+    class SearchBookmark(
+        private val itemProvider: (Int, Int, String) -> List<ArticleItemData>,
+        private val query: String
+    ): ArticleStrategy() {
         override fun getItems(start: Int, size: Int): List<ArticleItemData> {
             return itemProvider(start, size, query)
         }

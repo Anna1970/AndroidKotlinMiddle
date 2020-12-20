@@ -82,10 +82,8 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
     }
 
     private val bottombar
-       // get() = root.bottombar
         get() = root.findViewById<Bottombar>(R.id.bottombar)
     private val submenu
-        //get() = root.submenu
         get() = root.findViewById<ArticleSubmenu>(R.id.submenu)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -308,6 +306,9 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             if (it) bottombar.show() else bottombar.hide()
             if (submenu.isOpen) submenu.isVisible = it
         }
+        private var commentText by RenderProp("") {
+            et_comment.setText(it)
+        }
 
         override val afterInflated: (() -> Unit)? =
             {
@@ -346,6 +347,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
             answerTo = data.answerTo ?: "Comment"
             isShowBottombar = data.showBottombar
+            commentText = data.commentText ?: ""
         }
 
         override fun saveUi(outState: Bundle) {

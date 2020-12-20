@@ -10,37 +10,37 @@ import ru.skillbranch.skillarticles.data.models.ArticleItemData
 import ru.skillbranch.skillarticles.ui.custom.ArticleItemView
 
 class ArticlesAdapter(
-    private val listener: (ArticleItemData) -> Unit
+    private val listener: (ArticleItemData) -> Unit,
+    private val bookmarkListener: (id:String, isChecked:Boolean) -> Unit
 ) : PagedListAdapter<ArticleItemData, ArticleVH>(ArticleDiffCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleVH {
-       // val containerView = LayoutInflater.from(parent.context).inflate(R.layout.item_article, parent, false)
-        val view = ArticleItemView(parent.context)
-        return ArticleVH(view)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleVH =
+        ArticleVH(ArticleItemView(parent.context))
 
-    override fun onBindViewHolder(holder:ArticleVH, position: Int) {
-        holder.bind(getItem(position), listener)
+    override fun onBindViewHolder(holder: ArticleVH, position: Int) {
+        holder.bind(getItem(position), listener, bookmarkListener)
     }
 }
 
-class ArticleDiffCallback: DiffUtil.ItemCallback<ArticleItemData>(){
-    override fun areItemsTheSame(oldItem: ArticleItemData, newItem: ArticleItemData): Boolean =
-        oldItem.id == newItem.id
+class ArticleDiffCallback: DiffUtil.ItemCallback<ArticleItemData>() {
+    override fun areItemsTheSame(oldItem: ArticleItemData, newItem: ArticleItemData): Boolean {
+        return oldItem.id == newItem.id
+    }
 
-    override fun areContentsTheSame(oldItem: ArticleItemData, newItem: ArticleItemData): Boolean =
-        oldItem == newItem
+    override fun areContentsTheSame(oldItem: ArticleItemData, newItem: ArticleItemData): Boolean {
+        return oldItem == newItem
+    }
 }
 
-class ArticleVH(
-    val containerView: View
-) : RecyclerView.ViewHolder(containerView) {
-    fun bind(
+class ArticleVH( override val containerView: View
+) : RecyclerView.ViewHolder(containerView),
+    LayoutContainer {
+    fun bind (
         item: ArticleItemData?,
-        listener: (ArticleItemData) -> Unit
+        listener: (ArticleItemData) -> Unit,
+        bookmarkListener: (id: String, isChecked: Boolean) -> Unit
     ) {
-        //if use placeholder item may be null
-        (containerView as ArticleItemView).bind(item!!)
+        (containerView as ArticleItemView).bind(item!!, bookmarkListener)
         itemView.setOnClickListener { listener(item!!) }
     }
 }
