@@ -48,10 +48,11 @@ class BookmarksViewModel(handle: SavedStateHandle)  :
     }
 
 
-   /* fun handleToggleBookmark(id: String, isChecked: Boolean){
-        repository.updateBookmark(id, isChecked)
-        listData.value?.dataSource?.invalidate()
-    }*/
+    fun handleToggleBookmark(id: String, isChecked: Boolean){
+        updateState { it.copy(isLoading = true) }
+        repository.updateBookmark(id, !isChecked)
+        updateState { it.copy(isLoading = false) }
+    }
 
     private fun buildPagedList(dataFactory: ArticlesDataFactory): LiveData<PagedList<ArticleItemData>> {
         return LivePagedListBuilder(dataFactory, listConfig)

@@ -52,7 +52,7 @@ class BookmarksFragment : BaseFragment<BookmarksViewModel>() {
         viewModel.navigate(NavigationCommand.To(direction.actionId, direction.arguments))
     },
         bookmarkListener = { id, checked ->
-            (viewModel as ArticlesViewModel).handleToggleBookmark(id, checked)
+            viewModel.handleToggleBookmark(id, checked)
         }
     )
 

@@ -286,8 +286,6 @@ class ArticleItemView(
     }
 
     fun bind(data: ArticleItemData, bookmarkListener: (String, Boolean) -> Unit) {
-
-
         Glide.with(context)
             .load(data.poster)
             .transform(CenterCrop(), RoundedCorners(cornerRadius))
