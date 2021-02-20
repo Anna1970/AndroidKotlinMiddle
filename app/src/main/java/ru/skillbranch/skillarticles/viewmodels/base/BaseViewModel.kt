@@ -39,7 +39,7 @@ abstract class BaseViewModel<T : IViewModelState>(
      * модифицированное состояние, которое присваивается текущему состоянию
      */
     @UiThread
-    protected inline fun updateState(update: (currentState: T) -> T) {
+    inline fun updateState(update: (currentState: T) -> T) {
         val updatedState: T = update(currentState)
         state.value = updatedState
     }
@@ -64,6 +64,7 @@ abstract class BaseViewModel<T : IViewModelState>(
      */
     fun observeState(owner: LifecycleOwner, onChanged: (newState: T) -> Unit) {
         state.observe(owner, Observer { onChanged(it!!) })
+
     }
 
     /***
@@ -77,7 +78,8 @@ abstract class BaseViewModel<T : IViewModelState>(
     }
 
     fun observeNavigation(owner: LifecycleOwner, onNavigate: (command: NavigationCommand) -> Unit) {
-        navigation.observe(owner, EventObserver {onNavigate(it)})
+        navigation.observe(owner,
+            EventObserver { onNavigate(it) })
     }
 
     /***
@@ -94,12 +96,14 @@ abstract class BaseViewModel<T : IViewModelState>(
         }
     }
 
-    fun saveState(){
+    open fun saveState() {
         currentState.save(handleState)
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun restoreState(){
+    fun restoreState() {
+        val restoredState = currentState.restore(handleState) as T
+        if(currentState == restoredState) return
         state.value = currentState.restore(handleState) as T
     }
 
@@ -157,7 +161,7 @@ sealed class Notify() {
 
 sealed class NavigationCommand() {
     data class To(
-        val destination:Int,
+        val destination: Int,
         val args: Bundle? = null,
         val options: NavOptions? = null,
         val extras: Navigator.Extras? = null

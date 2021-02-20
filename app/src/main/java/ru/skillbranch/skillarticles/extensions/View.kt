@@ -1,42 +1,57 @@
 package ru.skillbranch.skillarticles.extensions
 
-import android.os.Parcelable
-import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.marginBottom
-import androidx.core.view.marginLeft
-import androidx.core.view.marginRight
-import androidx.core.view.marginTop
-import androidx.core.view.children
+import androidx.annotation.IdRes
+import androidx.core.view.*
 import androidx.navigation.NavDestination
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-fun View.setMarginOptionally(left:Int = marginLeft, top : Int = marginTop, right : Int = marginRight, bottom : Int = marginBottom) {
-    val param = this.layoutParams as ViewGroup.MarginLayoutParams
-    param.setMargins(left, top, right, bottom)
-    this.layoutParams = param
+fun View.setPaddingOptionally(
+    left:Int = paddingLeft,
+    top : Int = paddingTop,
+    right : Int = paddingRight,
+    bottom : Int = paddingBottom
+){
+    setPadding(left, top, right, bottom)
+}
+fun BottomNavigationView.selectDestination(destination: NavDestination){
+    for (item in menu.iterator()) {
+        if (matchDestination(destination, item.itemId)) {
+            item.isChecked = true
+        }
+    }
 }
 
-fun View.setPaddingOptionally(left: Int = paddingLeft, top: Int = paddingTop,
-                              right: Int = paddingRight, bottom: Int = paddingBottom)
-{
-    setPadding(left , top , right, bottom)
+fun View.setMarginOptionally(
+    left:Int = marginLeft,
+    top : Int = marginTop,
+    right : Int = marginRight,
+    bottom : Int = marginBottom
+){
+    (layoutParams as? ViewGroup.MarginLayoutParams)?.run{
+        leftMargin = left
+        rightMargin = right
+        topMargin = top
+        bottomMargin = bottom
+    }
+//    requestLayout()
 }
 
-fun ViewGroup.saveChildViewStates(): SparseArray<Parcelable> {
-    val childViewStates = SparseArray<Parcelable>()
-    children.forEach { child -> child.saveHierarchyState(childViewStates) }
-    return childViewStates
+fun BottomNavigationView.selectItem(itemId: Int?){
+    itemId?: return
+    for (item in menu.iterator()) {
+        if(item.itemId == itemId) {
+            item.isChecked = true
+            break
+        }
+    }
 }
 
-fun ViewGroup.restoreChildViewStates(childViewStates: SparseArray<Parcelable>) {
-    children.forEach { child -> child.restoreHierarchyState(childViewStates) }
-}
-
-fun BottomNavigationView.selectDestination(destination: NavDestination) {
-    //menu.findItem(destination.id)?.isChecked = true
-    menu.findItem(destination.id)?.let {
-        it.isChecked = true
-    } ?: run { menu.children.last().isChecked = true }
+fun matchDestination(destination: NavDestination, @IdRes destId: Int) : Boolean{
+    var currentDestination: NavDestination? = destination
+    while (currentDestination!!.id != destId && currentDestination.parent != null) {
+        currentDestination = currentDestination.parent
+    }
+    return currentDestination.id == destId
 }

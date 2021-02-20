@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
@@ -41,8 +42,15 @@
         android:label="@string/title_articles"
         tools:layout="@layout/fragment_articles" >
         <action
-            android:id="@+id/action_nav_articles_to_page_article"
+            android:id="@+id/action_to_page_article"
             app:destination="@id/page_article" />
+        <action
+            android:id="@+id/choose_category"
+            app:destination="@+id/choose_category_dialog"/>
+        <argument
+            android:name="is_bookmarks"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
     <fragment
         android:id="@+id/nav_profile"
@@ -51,14 +59,25 @@
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/nav_bookmarks"
-        android:name="ru.skillbranch.skillarticles.ui.bookmarks.BookmarksFragment"
+        android:name="ru.skillbranch.skillarticles.ui.articles.ArticlesFragment"
         android:label="@string/title_bookmarks"
-        tools:layout="@layout/fragment_bookmarks" />
+        tools:layout="@layout/fragment_articles" >
+        <argument
+            android:name="is_bookmarks"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <action
+            android:id="@+id/action_to_page_article"
+            app:destination="@id/page_article" />
+        <action
+            android:id="@+id/choose_category"
+            app:destination="@id/choose_category_dialog"/>
+    </fragment>
     <fragment
         android:id="@+id/nav_transcriptions"
         android:name="ru.skillbranch.skillarticles.ui.transcriptions.TranscriptionsFragment"
         android:label="@string/title_transcriptions"
-        tools:layout="@layout/fragment_transcriptions" />
+        tools:layout="@layout/fragment_transcriptions"/>
     <navigation
         android:id="@+id/auth"
         app:startDestination="@id/nav_auth"
@@ -68,7 +87,6 @@
             android:name="ru.skillbranch.skillarticles.ui.auth.AuthFragment"
             android:label="@string/title_authorization"
             tools:layout="@layout/fragment_auth" >
-
             <argument
                 android:name="private_destination"
                 app:argType="integer"
@@ -81,7 +99,6 @@
             tools:layout="@layout/fragment_privacy_policy" />
 
     </navigation>
-
     <!--global actions -->
     <action
         android:id="@+id/start_login"
@@ -90,5 +107,15 @@
         android:id="@+id/finish_login"
         app:popUpTo="@id/auth"
         app:popUpToInclusive="true"/>
-
+    <dialog
+        android:id="@+id/choose_category_dialog"
+        android:name="ru.skillbranch.skillarticles.ui.dialogs.ChooseCategoryDialog"
+        android:label="ChooseCategoryDialog">
+        <argument
+            android:name="selected_categories"
+            app:argType="string[]"/>
+        <argument
+            android:name="categories"
+            app:argType="ru.skillbranch.skillarticles.data.local.entities.CategoryData[]"/>
+    </dialog>
 </navigation>
