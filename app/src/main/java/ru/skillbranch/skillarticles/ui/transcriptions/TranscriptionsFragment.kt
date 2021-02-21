@@ -1,17 +1,17 @@
 package ru.skillbranch.skillarticles.ui.transcriptions
 
-import android.os.Bundle
+/*import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.view.ViewGroup*/
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+/*import androidx.lifecycle.ViewModelProviders
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.viewmodels.transcriptions.TranscriptionsViewModel
-
+*/
 class TranscriptionsFragment : Fragment() {
 
-    companion object {
+   /* companion object {
         fun newInstance() = TranscriptionsFragment()
     }
 
@@ -29,5 +29,5 @@ class TranscriptionsFragment : Fragment() {
         viewModel = ViewModelProviders.of(this).get(TranscriptionsViewModel::class.java)
         // TODO: Use the ViewModel
     }
-
+*/
 }
