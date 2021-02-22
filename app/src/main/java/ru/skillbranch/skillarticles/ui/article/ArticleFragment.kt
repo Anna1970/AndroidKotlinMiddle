@@ -9,8 +9,10 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -29,12 +31,14 @@ import kotlinx.android.synthetic.main.layout_bottombar.view.*
 import kotlinx.android.synthetic.main.layout_submenu.view.*
 import kotlinx.android.synthetic.main.search_view_layout.view.*
 import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.data.repositories.Element
 import ru.skillbranch.skillarticles.data.repositories.MarkdownElement
 import ru.skillbranch.skillarticles.extensions.*
 import ru.skillbranch.skillarticles.ui.base.*
 import ru.skillbranch.skillarticles.ui.custom.ArticleSubmenu
 import ru.skillbranch.skillarticles.ui.custom.Bottombar
 import ru.skillbranch.skillarticles.ui.custom.ShimmerDrawable
+import ru.skillbranch.skillarticles.ui.custom.markdown.MarkdownBuilder
 import ru.skillbranch.skillarticles.ui.delegates.RenderProp
 import ru.skillbranch.skillarticles.viewmodels.article.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.article.ArticleViewModel
@@ -377,6 +381,30 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             if (it.isBlank() && et_comment.hasFocus()) et_comment.clearFocus()
         }
 
+        //source && tags - 9 hometask
+        private val markdownBuilder = MarkdownBuilder(requireContext())
+
+        private var hashtags: List<String> by RenderProp<List<String>>(emptyList()) { hashtags ->
+            tv_hashtags.setText(buildSpannedString {
+                hashtags.forEach { hashtag ->
+                    markdownBuilder.buildElement(
+                        Element.InlineCode(hashtag), this
+                    )
+                    append(" ")
+                }
+            }, TextView.BufferType.SPANNABLE)
+        }
+
+        private var source by RenderProp("") { link ->
+            if (link.isNotEmpty()) {
+                tv_source.setText(buildSpannedString {
+                    markdownBuilder.buildElement(
+                        Element.Link(link, "Article source"), this
+                    )
+                }, TextView.BufferType.SPANNABLE)
+            }
+        }
+
         override val afterInflated: (() -> Unit)? = {
             dependsOn<Boolean, Boolean, List<Pair<Int, Int>>, Int>(
                 ::isLoadingContent,
@@ -412,8 +440,8 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             answerTo = data.answerTo ?: "Comment"
             isShowBottombar = data.showBottombar
             comment = data.commentText ?: ""
-           // hashtags = data.hashtags
-            //if (data.source != null) source = data.source
+            hashtags = data.hashtags
+            if (data.source != null) source = data.source
         }
 
         override fun saveUi(outState: Bundle) {

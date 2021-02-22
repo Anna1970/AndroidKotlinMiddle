@@ -58,9 +58,9 @@ class ArticleViewModel(
                 isBookmark = article.isBookmark,
                 isLike = article.isLike,
                 content = article.content?: emptyList(),
-                isLoadingContent = article.content == null//,
-                //hashtags = article.tags,
-                //source = article.source
+                isLoadingContent = article.content == null,
+                hashtags = article.tags,
+                source = article.source
             )
         }
 
@@ -215,7 +215,6 @@ class ArticleViewModel(
         updateState { it.copy(answerToSlug = slug, answerTo = "Replay to $name") }
     }
 }
-
 data class ArticleState(
     val isAuth: Boolean = false, //пользователь авторизован
     val isLoadingContent: Boolean = true, //content загружается
