@@ -163,7 +163,7 @@ class ArticleViewModel(
     }
 
     override fun handleSendComment(comment: String) {
-        if (comment == null) {
+        if (comment.isNullOrBlank()) {
             notify(Notify.TextMessage("Comment must be not empty"))
             return
         }

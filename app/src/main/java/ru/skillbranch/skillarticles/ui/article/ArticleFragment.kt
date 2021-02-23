@@ -66,21 +66,21 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
     override val layout: Int = R.layout.fragment_article
     override val binding: ArticleBinding by lazy { ArticleBinding() }
 
-    override val prepareToolbar: (ToolbarBuilder.() -> Unit)? = {
-        this.setTitle(args.title)
-            .setSubtitle(args.category)
-            .setLogo(args.categoryIcon)
-            .addMenuItem(
-                MenuItemHolder(
-                    "search",
-                    R.id.action_search,
-                    R.drawable.ic_search_black_24dp,
-                    R.layout.search_view_layout
-                )
+    override val prepareToolbar: (ToolbarBuilder.() -> Unit) = {
+        setTitle(args.title)
+        setSubtitle(args.category)
+        setLogo(args.categoryIcon)
+        addMenuItem(
+            MenuItemHolder(
+                title = "Search",
+                menuId = R.id.action_search,
+                icon = R.drawable.ic_search_black_24dp,
+                actionViewLayout = R.layout.search_view_layout
             )
+        )
     }
 
-    override val prepareBottombar: (BottombarBuilder.() -> Unit)? = {
+    override val prepareBottombar: (BottombarBuilder.() -> Unit) = {
         this.addView(R.layout.layout_submenu)
             .addView(R.layout.layout_bottombar)
             .setVisibility(false)
@@ -88,6 +88,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
     private val bottombar
         get() = root.findViewById<Bottombar>(R.id.bottombar)
+
     private val submenu
         get() = root.findViewById<ArticleSubmenu>(R.id.submenu)
 
@@ -193,20 +194,31 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         et_comment.setOnEditorActionListener { view, _, _ ->
             root.hideKeyboard(view)
             viewModel.handleSendComment(view.text.toString())
+
+            if (viewModel.currentState.isAuth) {
+                view.text = null
+                view.clearFocus()
+            }
+
             true
         }
 
         et_comment.setOnFocusChangeListener { _, hasFocus -> viewModel.handleCommentFocus(hasFocus) }
 
         wrap_comments.setEndIconOnClickListener { view ->
-            view.context.hideKeyboard(view)
-            viewModel.handleClearComment()
+ //           view.context.hideKeyboard(view)
+ //           viewModel.handleClearComment()
 //            et_comment.text = null
 //            et_comment.clearFocus()
+
+            requireActivity().hideKeyboard(view)
+            viewModel.handleClearComment()
+            et_comment.text = null
+            et_comment.clearFocus()
         }
 
         with(rv_comments) {
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = LinearLayoutManager(context)
             adapter = commentsAdapter
         }
 
@@ -228,7 +240,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         bottombar.setSearchState(false)
         scroll.setMarginOptionally(bottom = 0)
     }
-
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
@@ -316,9 +327,8 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         var searchQuery: String? = null
 
         private var isLoadingContent by RenderProp(false) {
-            Log.e("ArticleFragment", "content is loading: $it");
             tv_text_content.isLoading = it
-            if (it) setupCopyListener()
+            //if (it) setupCopyListener()
         }
         private var isLike: Boolean by RenderProp(false) { bottombar.btn_like.isChecked = it }
         private var isBookmark: Boolean by RenderProp(false) {
@@ -368,6 +378,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
         private var content: List<MarkdownElement> by RenderProp(emptyList()) {
             tv_text_content.setContent(it)
+            if (it.isNotEmpty()) setupCopyListener()
         }
 
         private var answerTo by RenderProp("Comment") { wrap_comments.hint = it }
