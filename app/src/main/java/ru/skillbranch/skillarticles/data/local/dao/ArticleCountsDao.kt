@@ -9,6 +9,7 @@ import ru.skillbranch.skillarticles.data.local.entities.ArticleCounts
 
 @Dao
 interface ArticleCountsDao : BaseDao<ArticleCounts> {
+    
     @Transaction
     fun upsert(list: List<ArticleCounts>) {
         insert(list)
