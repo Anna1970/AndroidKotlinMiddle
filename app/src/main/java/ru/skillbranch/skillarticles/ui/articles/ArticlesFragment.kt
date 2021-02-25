@@ -97,6 +97,26 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
         setHasOptionsMenu(true)
     }
 
+    private fun populateAdapter(constraint: CharSequence?): Cursor {
+        val cursor = MatrixCursor(
+                arrayOf(
+                        BaseColumns._ID,
+                        "tag"
+                )
+        )//create cursor for table with 2 column _id, tag
+        constraint ?: return cursor
+
+        val currentCursor = suggestionsAdapter.cursor
+        currentCursor.moveToFirst()
+
+        for (i in 0 until currentCursor.count) {
+            val tagValue = currentCursor.getString(1) //2 column with name tag
+            if (tagValue.contains(constraint, true)) cursor.addRow(arrayOf<Any>(i, tagValue))
+            currentCursor.moveToNext()
+        }
+        return cursor
+    }
+
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         val menuItem = menu.findItem(R.id.action_search)
@@ -145,6 +165,11 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
                 return true
             }
         })
+
+        searchView.setOnCloseListener {
+            viewModel.handleSearchMode(false)
+            true
+        }
     }
 
     override fun onDestroyView() {
@@ -170,26 +195,6 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
         viewModel.observeCategories(viewLifecycleOwner) {
             binding.categories = it
         }
-    }
-
-    private fun populateAdapter(constraint: CharSequence?): Cursor {
-        val cursor = MatrixCursor(
-            arrayOf(
-                BaseColumns._ID,
-                "tag"
-            )
-        )//create cursor for table with 2 column _id, tag
-        constraint ?: return cursor
-        val currentCursor = suggestionsAdapter.cursor
-
-        currentCursor.moveToFirst()
-
-        for (i in 0 until currentCursor.count) {
-            val tagValue = currentCursor.getString(1) //2 column with name tag
-            if (tagValue.contains(constraint, true)) cursor.addRow(arrayOf<Any>(i, tagValue))
-            currentCursor.moveToNext()
-        }
-        return cursor
     }
 
     inner class ArticlesBinding : Binding() {

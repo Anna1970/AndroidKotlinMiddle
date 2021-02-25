@@ -12,7 +12,7 @@ import ru.skillbranch.skillarticles.viewmodels.profile.ProfileViewModel
 */
 class ProfileFragment : Fragment() {
 
-   /* companion object {
+    /*companion object {
         fun newInstance() = ProfileFragment()
     }
 

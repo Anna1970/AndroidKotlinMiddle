@@ -9,9 +9,10 @@ import androidx.fragment.app.Fragment
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.viewmodels.transcriptions.TranscriptionsViewModel
 */
+
 class TranscriptionsFragment : Fragment() {
 
-   /* companion object {
+   /*companion object {
         fun newInstance() = TranscriptionsFragment()
     }
 
@@ -28,6 +29,5 @@ class TranscriptionsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(TranscriptionsViewModel::class.java)
         // TODO: Use the ViewModel
-    }
-*/
+    }*/
 }
