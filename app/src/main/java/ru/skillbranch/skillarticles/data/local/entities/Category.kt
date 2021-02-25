@@ -40,7 +40,6 @@ data class CategoryData(
         parcel.writeString(icon)
         parcel.writeString(title)
         parcel.writeInt(articlesCount)
-
     }
 
     companion object CREATOR : Parcelable.Creator<CategoryData> {

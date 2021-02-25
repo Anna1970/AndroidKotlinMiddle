@@ -5,12 +5,15 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -29,12 +32,14 @@ import kotlinx.android.synthetic.main.layout_bottombar.view.*
 import kotlinx.android.synthetic.main.layout_submenu.view.*
 import kotlinx.android.synthetic.main.search_view_layout.view.*
 import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.data.repositories.Element
 import ru.skillbranch.skillarticles.data.repositories.MarkdownElement
 import ru.skillbranch.skillarticles.extensions.*
 import ru.skillbranch.skillarticles.ui.base.*
 import ru.skillbranch.skillarticles.ui.custom.ArticleSubmenu
 import ru.skillbranch.skillarticles.ui.custom.Bottombar
 import ru.skillbranch.skillarticles.ui.custom.ShimmerDrawable
+import ru.skillbranch.skillarticles.ui.custom.markdown.MarkdownBuilder
 import ru.skillbranch.skillarticles.ui.delegates.RenderProp
 import ru.skillbranch.skillarticles.viewmodels.article.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.article.ArticleViewModel
@@ -189,6 +194,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         et_comment.setOnEditorActionListener { view, _, _ ->
             root.hideKeyboard(view)
             viewModel.handleSendComment(view.text.toString())
+            view.clearFocus()
             true
         }
 
@@ -197,8 +203,8 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         wrap_comments.setEndIconOnClickListener { view ->
             view.context.hideKeyboard(view)
             viewModel.handleClearComment()
-//            et_comment.text = null
-//            et_comment.clearFocus()
+            et_comment.text = null
+            et_comment.clearFocus()
         }
 
         with(rv_comments) {
@@ -224,7 +230,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         bottombar.setSearchState(false)
         scroll.setMarginOptionally(bottom = 0)
     }
-
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
@@ -366,6 +371,35 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             tv_text_content.setContent(it)
         }
 
+        val markdownBuilder = MarkdownBuilder(requireContext())
+
+        private var hashtags: List<String> by RenderProp(emptyList()) {
+            tv_hashtags.setText(
+                buildSpannedString {
+                    it.forEach {
+                        markdownBuilder.buildElement(Element.InlineCode(it), this)
+                        append(" ")
+                    }
+                },
+                TextView.BufferType.SPANNABLE
+            )
+        }
+
+        private var source: String by RenderProp("") {
+            if (it.isNotEmpty()) {
+                tv_source.isVisible = true
+                tv_source.setText(
+                    buildSpannedString {
+                        markdownBuilder.buildElement(Element.Link(it, "Article source"), this)
+                    },
+                    TextView.BufferType.SPANNABLE
+                )
+                tv_source.movementMethod = LinkMovementMethod.getInstance()
+            } else {
+                tv_source.isVisible = false
+            }
+        }
+
         private var answerTo by RenderProp("Comment") { wrap_comments.hint = it }
         private var isShowBottombar by RenderProp(true) {
             if (it) bottombar.show() else bottombar.hide()
@@ -412,8 +446,8 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             answerTo = data.answerTo ?: "Comment"
             isShowBottombar = data.showBottombar
             comment = data.commentText ?: ""
-           // hashtags = data.hashtags
-            //if (data.source != null) source = data.source
+            hashtags = data.hashtags
+            source = data.source?:""
         }
 
         override fun saveUi(outState: Bundle) {

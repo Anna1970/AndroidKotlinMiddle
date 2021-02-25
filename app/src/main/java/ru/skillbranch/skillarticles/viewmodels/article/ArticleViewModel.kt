@@ -58,9 +58,9 @@ class ArticleViewModel(
                 isBookmark = article.isBookmark,
                 isLike = article.isLike,
                 content = article.content?: emptyList(),
-                isLoadingContent = article.content == null//,
-                //hashtags = article.tags,
-                //source = article.source
+                isLoadingContent = article.content == null,
+                hashtags = article.tags,
+                source = article.source ?: null
             )
         }
 

@@ -100,19 +100,25 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:lineSpacingExtra="4dp"
+            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            tools:text="#Hashtag"/>
+
         <TextView
             android:id="@+id/tv_source"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/tv_hashtags"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             android:includeFontPadding="false"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp"
+            android:paddingBottom="8dp"
+            tools:tetx="source.com"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/wrap_comments"
