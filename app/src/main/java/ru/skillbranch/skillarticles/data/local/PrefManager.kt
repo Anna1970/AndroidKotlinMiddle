@@ -1,55 +1,54 @@
 package ru.skillbranch.skillarticles.data.local
 
-import android.annotation.SuppressLint
 import android.content.SharedPreferences
-import androidx.core.content.edit
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
 import androidx.preference.PreferenceManager
 import ru.skillbranch.skillarticles.App
+import ru.skillbranch.skillarticles.data.JsonConverter.moshi
 import ru.skillbranch.skillarticles.data.delegates.PrefDelegate
+import ru.skillbranch.skillarticles.data.delegates.PrefLiveDelegate
+import ru.skillbranch.skillarticles.data.delegates.PrefLiveObjDelegate
+import ru.skillbranch.skillarticles.data.delegates.PrefObjDelegate
 import ru.skillbranch.skillarticles.data.models.AppSettings
+import ru.skillbranch.skillarticles.data.models.User
 
-@SuppressLint("RestrictedApi")
 object PrefManager {
-    internal val preferences : SharedPreferences by lazy {
+    internal val preferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(App.applicationContext())
     }
 
-    private val isauth = MutableLiveData(false)
-    private val appsettings = MutableLiveData(
-        AppSettings(isDarkMode = false, isBigText = false)
+    var isAuth  by PrefDelegate(false)
+    var isDarkMode by PrefDelegate(false)
+    var isBigText by PrefDelegate(false)
+    var accessToken by PrefDelegate("")
+    var refreshToken by PrefDelegate("")
+    var profile: User? by PrefObjDelegate(moshi.adapter(User::class.java))
+
+    val isAuthLive: LiveData<Boolean> by lazy {
+        val token by PrefLiveDelegate("accessToken", "", preferences)
+        token.map { it.isNotEmpty() }
+    }
+    val profileLive: LiveData<User?> by PrefLiveObjDelegate(
+        "profile",
+        moshi.adapter(User::class.java),
+        preferences
     )
 
-    init {
-        isauth.postValue(preferences.getBoolean("isAuth", false))
-        appsettings.postValue(
-            AppSettings(
-                isDarkMode = preferences.getBoolean("isDarkMode", false),
-                isBigText = preferences.getBoolean("isBigText", false)
-            )
-        )
-    }
+    val appSettings = MediatorLiveData<AppSettings>().apply {
+        val isDarkModeLive: LiveData<Boolean> by PrefLiveDelegate("isDarkMode", false, preferences)
+        val isBigTextLive: LiveData<Boolean> by PrefLiveDelegate("isBigText", false, preferences)
+        value = AppSettings()
+
+        addSource(isDarkModeLive) {
+            value = value!!.copy(isDarkMode = it)
+        }
+        addSource(isBigTextLive) {
+            value = value!!.copy(isBigText = it)
+        }
+
+    }.distinctUntilChanged()
 
     fun clearAll() {
         preferences.edit().clear().apply()
-    }
-
-    fun getAppSettings(): LiveData<AppSettings> = appsettings
-
-
-    fun isAuth() : MutableLiveData<Boolean> = isauth
-
-    fun setAuth(auth:Boolean): Unit {
-        isauth.postValue(auth)
-        preferences.edit().putBoolean("isAuth", auth).apply()
-    }
-
-    fun updateSettings(settings: AppSettings) {
-        appsettings.postValue(settings)
-        preferences.edit()
-            .putBoolean("isDarkMode", settings.isDarkMode)
-            .putBoolean("isBigText", settings.isBigText)
-            .apply()
     }
 }

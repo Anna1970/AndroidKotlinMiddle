@@ -13,9 +13,9 @@ fun List<Pair<Int, Int>>.groupByBounds(bounds: List<Pair<Int, Int>>): List<List<
 
             when {
                 result.first in boundRange && result.second in boundRange -> {
-                        results[index].add(result.first to result.second)
-                        lastResult++
-                        lastIndex = result.second
+                    results[index].add(result.first to result.second)
+                    lastResult++
+                    lastIndex = result.second
                 }
 
                 result.first in boundRange && result.second !in boundRange -> {

@@ -73,7 +73,7 @@ data class ArticleItem(
      personal.is_bookmark AS is_bookmark, personal.is_like AS is_like, 
      source, GROUP_CONCAT (refs.t_id, ";") AS tags
      FROM articles AS article
-     INNER JOIN article_categories AS category ON category.category_id = article.category_id
+     LEFT JOIN article_categories AS category ON category.category_id = article.category_id
      LEFT JOIN article_contents AS content ON content.article_id = id
      LEFT JOIN article_personal_infos AS personal ON personal.article_id = id
      LEFT JOIN article_tag_x_ref AS refs ON refs.a_id = id

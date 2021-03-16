@@ -10,7 +10,7 @@ import ru.skillbranch.skillarticles.data.local.entities.*
 interface ArticlesDao : BaseDao<Article>{
 
     @Transaction
-    fun upsert(list: List<Article>) {
+    suspend fun upsert(list: List<Article>) {
         insert(list)
             .mapIndexed { index, recordResult -> if (recordResult == -1L) list[index] else null }
             .filterNotNull()
@@ -56,4 +56,10 @@ interface ArticlesDao : BaseDao<Article>{
 
     @RawQuery(observedEntities = [ArticleItem::class])
     fun findArticlesByRaw(simpleSQLiteQuery: SimpleSQLiteQuery): DataSource.Factory<Int, ArticleItem>
+
+    @Query("SELECT id FROM articles ORDER BY date DESC LIMIT 1")
+    suspend fun findLastArticleId(): String?
+
+    @Query("SELECT * FROM articles")
+    suspend fun findArticlesTest(): List<Article>
 }

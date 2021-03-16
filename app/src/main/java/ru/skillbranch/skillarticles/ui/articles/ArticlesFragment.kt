@@ -9,12 +9,14 @@ import android.view.MenuItem
 import android.widget.AutoCompleteTextView
 import androidx.appcompat.widget.SearchView
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.isVisible
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.fragment_articles.*
 import kotlinx.android.synthetic.main.search_view_layout.view.*
 import ru.skillbranch.skillarticles.R
@@ -27,6 +29,7 @@ import ru.skillbranch.skillarticles.ui.delegates.RenderProp
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesState
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
+import ru.skillbranch.skillarticles.viewmodels.base.Loading
 import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
 
 class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
@@ -93,28 +96,7 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
             CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
         )
         suggestionsAdapter.setFilterQueryProvider { constraint -> populateAdapter(constraint)  }
-
         setHasOptionsMenu(true)
-    }
-
-    private fun populateAdapter(constraint: CharSequence?): Cursor {
-        val cursor = MatrixCursor(
-                arrayOf(
-                        BaseColumns._ID,
-                        "tag"
-                )
-        )//create cursor for table with 2 column _id, tag
-        constraint ?: return cursor
-
-        val currentCursor = suggestionsAdapter.cursor
-        currentCursor.moveToFirst()
-
-        for (i in 0 until currentCursor.count) {
-            val tagValue = currentCursor.getString(1) //2 column with name tag
-            if (tagValue.contains(constraint, true)) cursor.addRow(arrayOf<Any>(i, tagValue))
-            currentCursor.moveToNext()
-        }
-        return cursor
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -177,6 +159,17 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
         super.onDestroyView()
     }
 
+    override fun renderLoading(loadingState: Loading) {
+        when(loadingState) {
+            Loading.SHOW_LOADING -> if (!refresh.isRefreshing) root.progress.isVisible = true
+            Loading.SHOW_BLOCKING_LOADING -> root.progress.isVisible = false
+            Loading.HIDE_LOADING -> {
+                root.progress.isVisible = false
+                if (refresh.isRefreshing) refresh.isRefreshing = false
+            }
+        }
+    }
+
     override fun setupViews() {
         with(rv_articles) {
             layoutManager = LinearLayoutManager(context)
@@ -195,6 +188,30 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
         viewModel.observeCategories(viewLifecycleOwner) {
             binding.categories = it
         }
+
+        refresh.setOnRefreshListener {
+            viewModel.refresh()
+        }
+    }
+
+    private fun populateAdapter(constraint: CharSequence?): Cursor {
+        val cursor = MatrixCursor(
+            arrayOf(
+                BaseColumns._ID,
+                "tag"
+            )
+        )//create cursor for table with 2 column _id, tag
+        constraint ?: return cursor
+
+        val currentCursor = suggestionsAdapter.cursor
+        currentCursor.moveToFirst()
+
+        for (i in 0 until currentCursor.count) {
+            val tagValue = currentCursor.getString(1) //2 column with name tag
+            if (tagValue.contains(constraint, true)) cursor.addRow(arrayOf<Any>(i, tagValue))
+            currentCursor.moveToNext()
+        }
+        return cursor
     }
 
     inner class ArticlesBinding : Binding() {
@@ -236,7 +253,6 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
                         cursor.addRow(arrayOf<Any>(counter, tag))
                     }
                 }
-
                 suggestionsAdapter.changeCursor(cursor)
             }
         }

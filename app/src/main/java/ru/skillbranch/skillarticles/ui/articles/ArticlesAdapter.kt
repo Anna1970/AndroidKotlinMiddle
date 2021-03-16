@@ -31,8 +31,8 @@ class ArticleDiffCallback: DiffUtil.ItemCallback<ArticleItem>() {
     }
 }
 
-class ArticleVH( override val containerView: View
-) : RecyclerView.ViewHolder(containerView), LayoutContainer{
+class ArticleVH( private val containerView: View
+) : RecyclerView.ViewHolder(containerView) {
     fun bind (
         item: ArticleItem?,
         listener: (ArticleItem, Boolean) -> Unit

@@ -1,10 +1,5 @@
 package ru.skillbranch.skillarticles.viewmodels.article
 
-import androidx.lifecycle.LiveData
-import ru.skillbranch.skillarticles.data.models.ArticleData
-import ru.skillbranch.skillarticles.data.local.entities.ArticlePersonalInfo
-import ru.skillbranch.skillarticles.data.repositories.MarkdownElement
-
 interface IArticleViewModel {
     /**
      * Получение настроек приложения
@@ -84,5 +79,5 @@ interface IArticleViewModel {
     /**
      * обрабока отправки комментария, если пользователь не авторизован отобразить экран авторизации
      **/
-    fun handleSendComment(comment: String)
+    fun handleSendComment(comment: String?)
 }

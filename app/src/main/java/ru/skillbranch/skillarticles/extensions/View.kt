@@ -15,13 +15,6 @@ fun View.setPaddingOptionally(
 ){
     setPadding(left, top, right, bottom)
 }
-fun BottomNavigationView.selectDestination(destination: NavDestination){
-    for (item in menu.iterator()) {
-        if (matchDestination(destination, item.itemId)) {
-            item.isChecked = true
-        }
-    }
-}
 
 fun View.setMarginOptionally(
     left:Int = marginLeft,
@@ -36,6 +29,14 @@ fun View.setMarginOptionally(
         bottomMargin = bottom
     }
 //    requestLayout()
+}
+
+fun BottomNavigationView.selectDestination(destination: NavDestination){
+    for (item in menu.iterator()) {
+        if (matchDestination(destination, item.itemId)) {
+            item.isChecked = true
+        }
+    }
 }
 
 fun BottomNavigationView.selectItem(itemId: Int?){
