@@ -7,7 +7,7 @@ import okhttp3.Response
 import okhttp3.Route
 import ru.skillbranch.skillarticles.data.local.PrefManager
 import ru.skillbranch.skillarticles.data.remote.NetworkManager
-import ru.skillbranch.skillarticles.data.remote.req.RefreshTokenReq
+import ru.skillbranch.skillarticles.data.remote.req.RefreshReq
 
 class TokenAuthenticator : Authenticator {
     private val preferences = PrefManager
@@ -28,7 +28,7 @@ class TokenAuthenticator : Authenticator {
 
     private fun getRefreshToken(): String? {
         val refreshToken = preferences.refreshToken
-        val response = api.refreshToken(RefreshTokenReq(refreshToken)).execute()
+        val response = api.refreshToken(RefreshReq(refreshToken)).execute()
         return if (response.isSuccessful) {
             response.body()?.let {
                 val newAccessToken = "Bearer ${it.accessToken}"

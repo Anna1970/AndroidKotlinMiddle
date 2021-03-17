@@ -4,7 +4,7 @@ import retrofit2.Call
 import retrofit2.http.*
 import ru.skillbranch.skillarticles.data.remote.req.LoginReq
 import ru.skillbranch.skillarticles.data.remote.req.MessageReq
-import ru.skillbranch.skillarticles.data.remote.req.RefreshTokenReq
+import ru.skillbranch.skillarticles.data.remote.req.RefreshReq
 import ru.skillbranch.skillarticles.data.remote.res.*
 
 interface RestService {
@@ -51,7 +51,7 @@ interface RestService {
     fun loginCall(@Body loginReq: LoginReq): Call<AuthRes>
 
     @POST("auth/refresh")
-    fun refreshToken(@Body refresh: RefreshTokenReq): Call<AuthRes>
+    fun refreshToken(@Body refresh: RefreshReq): Call<AuthRes>
 
     //https://skill-articles.skill-branch.ru/api/v1/articles/{articleId}/decrementLikes
     @POST("articles/{article}/decrementLikes")
