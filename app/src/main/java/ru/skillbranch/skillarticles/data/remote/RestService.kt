@@ -50,8 +50,10 @@ interface RestService {
     @POST("auth/login")
     fun loginCall(@Body loginReq: LoginReq): Call<AuthRes>
 
+
+    //POST https://skill-articles.skill-branch.ru/api/v1/auth/refresh
     @POST("auth/refresh")
-    fun refreshToken(@Body refresh: RefreshReq): Call<AuthRes>
+    fun refreshToken(@Body refresh: RefreshReq): Call<RefreshRes>
 
     //https://skill-articles.skill-branch.ru/api/v1/articles/{articleId}/decrementLikes
     @POST("articles/{article}/decrementLikes")

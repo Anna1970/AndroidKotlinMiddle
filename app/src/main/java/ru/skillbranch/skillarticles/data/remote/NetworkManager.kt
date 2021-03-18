@@ -1,13 +1,11 @@
 package ru.skillbranch.skillarticles.data.remote
 
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import ru.skillbranch.skillarticles.AppConfig
-import ru.skillbranch.skillarticles.data.JsonConverter
+import ru.skillbranch.skillarticles.data.JsonConverter.moshi
 import ru.skillbranch.skillarticles.data.remote.interceptors.ErrorStatusInterceptor
 import ru.skillbranch.skillarticles.data.remote.interceptors.NetworkStatusInterceptor
 import ru.skillbranch.skillarticles.data.remote.interceptors.TokenAuthenticator
@@ -30,10 +28,10 @@ object NetworkManager {
             .build()
 
         //json converter
-        val moshi = Moshi.Builder()
+        /*val moshi = Moshi.Builder()
             .add(JsonConverter.DateAdapter()) //convert long timestamp to Date
             .add(KotlinJsonAdapterFactory()) //convert json to class be reflection
-            .build()
+            .build()*/
 
         //retrofit
         val retrofit = Retrofit.Builder()
