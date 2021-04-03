@@ -4,8 +4,10 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,18 +16,21 @@ import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesViewModel
 
 
 class ChoseCategoryDialog : DialogFragment() {
-    private val viewModel: ArticlesViewModel by activityViewModels()
+    companion object {
+        const val CHOOSE_CATEGORY_KEY = "CHOOSE_CATEGORY_KEY"
+        const val SELECTED_CATEGORIES = "SELECTED_CATEGORIES"
+    }
+
     private val selected = mutableListOf<String>()
     private val args : ChoseCategoryDialogArgs by  navArgs()
+
     //custom choose category dialog
     private val categoryAdapter = CategoryAdapter { categoryId:String, isChecked:Boolean ->
         if (isChecked) selected.add(categoryId)
         else selected.remove(categoryId)
     }
 
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-
         selected.clear()
         selected.addAll(savedInstanceState?.getStringArray("checked") ?: args.selectedCategories)
 
@@ -33,18 +38,22 @@ class ChoseCategoryDialog : DialogFragment() {
 
         categoryAdapter.submitList(categoryItems)
 
+        //inflate list
         val listView = layoutInflater.inflate(R.layout.fragment_chose_category_dialog, null) as RecyclerView
 
-        listView.layoutManager = LinearLayoutManager(requireContext())
-        listView.adapter = categoryAdapter
+        //list settings
+        with(listView) {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = categoryAdapter
+        }
 
         return AlertDialog.Builder(requireContext())
             .setTitle("Choose category")
-            .setPositiveButton("Apply") { dialog: DialogInterface?, which: Int ->
-                viewModel.applyCategories(selected)
+            .setPositiveButton("Apply") { _, _ ->
+                setFragmentResult(CHOOSE_CATEGORY_KEY, bundleOf(SELECTED_CATEGORIES to selected.toList()))
             }
             .setNegativeButton("Reset") { _, _ ->
-                viewModel.applyCategories(emptyList())
+                setFragmentResult(CHOOSE_CATEGORY_KEY, bundleOf(SELECTED_CATEGORIES to emptyList<String>()))
             }
             .setView(listView)
             .create()

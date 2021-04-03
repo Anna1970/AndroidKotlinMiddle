@@ -19,11 +19,15 @@ abstract class BaseViewModel<T : IViewModelState>(
     initState: T
 ) : ViewModel() {
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
-    private val notifications = MutableLiveData<Event<Notify>>()
-    private val loading = MutableLiveData<Loading>(Loading.HIDE_LOADING)
+    val notifications = MutableLiveData<Event<Notify>>()
+
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     val navigation = MutableLiveData<Event<NavigationCommand>>()
 
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    val permission = MutableLiveData<Event<List<String>>>()
+
+    private val loading = MutableLiveData<Loading>(Loading.HIDE_LOADING)
 
     /***
      * Инициализация начального состояния аргументом конструктоа, и объявления состояния как
@@ -58,8 +62,9 @@ abstract class BaseViewModel<T : IViewModelState>(
      * соответсвенно при изменении конфигурации и пересоздании Activity уведомление не будет вызвано
      * повторно
      */
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     @UiThread
-    protected fun notify(content: Notify) {
+    fun notify(content: Notify) {
         notifications.value = Event(content)
     }
 
@@ -171,6 +176,14 @@ abstract class BaseViewModel<T : IViewModelState>(
             compHandler?.invoke(it)
         }
 
+    }
+
+    fun requestPermissions(requestedPermissions:List<String>){
+        permission.value = Event(requestedPermissions)
+    }
+
+    fun observerPermissions(owner: LifecycleOwner, handle:(permissions:List<String>)-> Unit) {
+        permission.observe(owner, EventObserver{handle(it)})
     }
 
 }

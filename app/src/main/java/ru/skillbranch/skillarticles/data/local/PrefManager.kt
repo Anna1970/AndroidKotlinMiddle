@@ -17,7 +17,6 @@ object PrefManager {
         PreferenceManager.getDefaultSharedPreferences(App.applicationContext())
     }
 
-    var isAuth  by PrefDelegate(false)
     var isDarkMode by PrefDelegate(false)
     var isBigText by PrefDelegate(false)
     var accessToken by PrefDelegate("")
@@ -50,5 +49,9 @@ object PrefManager {
 
     fun clearAll() {
         preferences.edit().clear().apply()
+    }
+
+    fun  replaceAvatarUrl(url:String) {
+        profile = profile!!.copy(avatar = url)
     }
 }

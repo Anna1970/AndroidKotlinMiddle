@@ -1,5 +1,6 @@
 package ru.skillbranch.skillarticles.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.navigation.ui.AppBarConfiguration
@@ -17,10 +18,13 @@ import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
 
+@SuppressLint("ResourceType")
 class RootActivity : BaseActivity<RootViewModel>(){
-    var isAuth : Boolean = false
+
     override val layout: Int = R.layout.activity_root
     public override val viewModel: RootViewModel by viewModels()
+
+    private var isAuth: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,10 +51,9 @@ class RootActivity : BaseActivity<RootViewModel>(){
 
             if(destination.id == R.id.nav_auth ) nav_view.selectItem(arguments?.get("private_destination")as Int?)
 
-            if(isAuth && destination.id == R.id.nav_auth){
+            if(viewModel.currentState.isAuth && destination.id == R.id.nav_auth){
                 controller.popBackStack()
-                val private = arguments?.get("private_destination") as Int?
-                if(private !=null) controller.navigate(private)
+                viewModel.navigate(NavigationCommand.To(R.id.nav_profile, arguments))
             }
         }
     }
@@ -60,24 +63,18 @@ class RootActivity : BaseActivity<RootViewModel>(){
         snackbar.anchorView = findViewById<Bottombar>(R.id.bottombar) ?: nav_view
 
         when (notify) {
+            is  Notify.TextMessage -> { }
             is Notify.ActionMessage -> {
-                val (_, label, handler) = notify
-
-                with(snackbar) {
-                    setActionTextColor(getColor(R.color.color_accent_dark))
-                    setAction(label) { handler.invoke() }
-                }
+                snackbar.setAction(notify.actionLabel) {notify.actionHandler.invoke()}
             }
 
             is Notify.ErrorMessage -> {
-                val (_, label, handler) = notify
-
                 with(snackbar) {
                     setBackgroundTint(getColor(R.color.design_default_color_error))
                     setTextColor(getColor(android.R.color.white))
                     setActionTextColor(getColor(android.R.color.white))
-                    handler ?: return@with
-                    setAction(label) { handler.invoke() }
+                    //handler ?: return@with
+                    setAction(notify.errLabel) { notify.errHandler?.invoke() }
                 }
             }
         }
@@ -86,7 +83,6 @@ class RootActivity : BaseActivity<RootViewModel>(){
     }
 
     override fun subscribeOnState(state: IViewModelState) {
-        state as RootState
-        isAuth = state.isAuth
+        isAuth = (state as RootState).isAuth
     }
 }
