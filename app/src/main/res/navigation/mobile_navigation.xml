@@ -53,15 +53,6 @@
             android:defaultValue="false" />
     </fragment>
     <fragment
-        android:id="@+id/nav_profile"
-        android:name="ru.skillbranch.skillarticles.ui.profile.ProfileFragment"
-        android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile" >
-        <action
-            android:id="@+id/action_nav_profile_to_dialog_avatar_actions"
-            app:destination="@id/dialog_avatar_actions" />
-    </fragment>
-    <fragment
         android:id="@+id/nav_bookmarks"
         android:name="ru.skillbranch.skillarticles.ui.articles.ArticlesFragment"
         android:label="@string/title_bookmarks"
@@ -78,6 +69,18 @@
             app:destination="@id/dialog_choose_category"/>
     </fragment>
     <fragment
+        android:id="@+id/nav_profile"
+        android:name="ru.skillbranch.skillarticles.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_nav_profile_to_dialog_avatar_actions"
+            app:destination="@id/dialog_avatar_actions" />
+        <action
+            android:id="@+id/action_edit_profile"
+            app:destination="@id/dialog_edit_profile"/>
+    </fragment>
+    <fragment
         android:id="@+id/nav_transcriptions"
         android:name="ru.skillbranch.skillarticles.ui.transcriptions.TranscriptionsFragment"
         android:label="@string/title_transcriptions"
@@ -91,18 +94,34 @@
             android:name="ru.skillbranch.skillarticles.ui.auth.AuthFragment"
             android:label="@string/title_authorization"
             tools:layout="@layout/fragment_auth" >
+            <action
+                android:id="@+id/action_to_page_privacy_policy"
+                app:destination="@id/page_privacy_policy" />
             <argument
                 android:name="private_destination"
                 app:argType="integer"
                 android:defaultValue="-1" />
+            <action
+                android:id="@+id/action_to_page_registration"
+                app:destination="@id/page_registration"/>
         </fragment>
         <fragment
             android:id="@+id/page_privacy_policy"
             android:name="ru.skillbranch.skillarticles.ui.auth.PrivacyPolicyFragment"
             android:label="@string/title_privacy_policy"
-            tools:layout="@layout/fragment_privacy_policy" />
-
+            tools:layout="@layout/fragment_privacy_policy"/>
+        <fragment
+            android:id="@+id/page_registration"
+            android:name="ru.skillbranch.skillarticles.ui.auth.RegistrationFragment"
+            android:label="@string/title_registrationy"
+            tools:layout="@layout/fragment_registration">
+            <argument
+                android:name="private_destination"
+                app:argType="integer"
+                android:defaultValue="-1"/>
+        </fragment>
     </navigation>
+
     <!--global actions -->
     <action
         android:id="@+id/start_login"
@@ -128,5 +147,15 @@
         <argument
             android:name="has_avatar"
             app:argType="boolean"/>
+    </dialog>
+    <dialog
+        android:id="@+id/dialog_edit_profile"
+        android:name="ru.skillbranch.skillarticles.ui.dialogs.EditProfileDialog">
+        <argument
+            android:name="name"
+            app:argType="string"/>
+        <argument
+            android:name="about"
+            app:argType="string"/>
     </dialog>
 </navigation>

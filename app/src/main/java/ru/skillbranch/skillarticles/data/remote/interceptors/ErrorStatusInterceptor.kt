@@ -23,10 +23,7 @@ class ErrorStatusInterceptor : Interceptor {
 
         when (res.code){
             400 -> throw  ApiError.BadRequest(errMessage)
-            401 -> {
-                Log.e("-=ErrStatInterceptor=-", "response.code = 401")
-                throw  ApiError.Unauthorized(errMessage)
-            }
+            401 -> throw  ApiError.Unauthorized(errMessage)
             403 -> throw  ApiError.Forbidden(errMessage)
             404 -> throw  ApiError.NotFound(errMessage)
             500 -> throw  ApiError.InternalServerError(errMessage)

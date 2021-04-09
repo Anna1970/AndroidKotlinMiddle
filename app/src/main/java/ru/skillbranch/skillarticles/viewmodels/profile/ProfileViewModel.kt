@@ -126,6 +126,12 @@ class ProfileViewModel(handle: SavedStateHandle) :
         updateState { it.copy(pendingAction = PendingAction.CameraAction(destination))}
         requestPermissions(storegePermissions)
     }
+
+    fun handleEditProfile(name: String, about: String) {
+        launchSafety {
+            repository.editProfile(name, about)
+        }
+    }
 }
 
 data class ProfileState(

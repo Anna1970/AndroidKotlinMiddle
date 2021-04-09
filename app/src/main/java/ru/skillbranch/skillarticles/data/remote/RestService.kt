@@ -4,10 +4,7 @@ import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
 import ru.skillbranch.skillarticles.data.models.User
-import ru.skillbranch.skillarticles.data.remote.req.LoginReq
-import ru.skillbranch.skillarticles.data.remote.req.MessageReq
-import ru.skillbranch.skillarticles.data.remote.req.EditProfileReq
-import ru.skillbranch.skillarticles.data.remote.req.RefreshReq
+import ru.skillbranch.skillarticles.data.remote.req.*
 import ru.skillbranch.skillarticles.data.remote.res.*
 
 interface RestService {
@@ -52,6 +49,9 @@ interface RestService {
 
     @POST("auth/login")
     fun loginCall(@Body loginReq: LoginReq): Call<AuthRes>
+
+    @POST("auth/register")
+    suspend fun register(@Body registrationReq: RegistrationReq): AuthRes
 
 
     //POST https://skill-articles.skill-branch.ru/api/v1/auth/refresh
