@@ -31,7 +31,7 @@ class AuthViewModel(handle: SavedStateHandle) : BaseViewModel<AuthState>(handle,
             return
         }
         if (!isValidName(name)) {
-            notify(Notify.ErrorMessage("The name must be at least 3 characters long and contains only numbers, letters and characters `-` or `_`"))
+            notify(Notify.ErrorMessage("The name must be at least 3 characters long and contain only letters and numbers and can also contain the characters \"-\" and \"_\""))
             return
         }
         if (!isValidLogin(login)) {
