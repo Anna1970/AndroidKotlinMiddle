@@ -35,11 +35,11 @@ class AuthViewModel(handle: SavedStateHandle) : BaseViewModel<AuthState>(handle,
             return
         }
         if (!isValidLogin(login)) {
-            notify(Notify.ErrorMessage("The login must be email"))
+            notify(Notify.ErrorMessage("Incorrect Email entered"))
             return
         }
         if (!isValidPassword(pass)) {
-            notify(Notify.ErrorMessage("The password must be at least 8 characters long and contains only numbers and letters"))
+            notify(Notify.ErrorMessage("Password must be at least 8 characters long and contain only letters and numbers"))
             return
         }
 
